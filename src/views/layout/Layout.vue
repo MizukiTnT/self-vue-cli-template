@@ -1,21 +1,27 @@
 <template>
   <div class="app-wrapper">
     <div class="main-container">
+      <top-nav/>
       <navbar/>
-      aaaaaaa
       <app-main/>
+      <footer-nav/>
     </div>
   </div>
 </template>
 
 <script>
-import { Navbar, AppMain } from './components'
+import { Navbar, AppMain, TopNav, FooterNav } from './components'
 
 export default {
   name: 'Layout',
   components: {
     Navbar,
-    AppMain
+    AppMain,
+    TopNav,
+    FooterNav
+  },
+  mounted() {
+
   }
 }
 </script>

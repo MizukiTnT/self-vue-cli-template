@@ -72,3 +72,17 @@ a:hover {
 .app-container {
   padding: 20px;
 }
+
+// 设置居中
+nav {
+  margin: 0 auto;
+  width: 1100px;
+}
+
+.align-right {
+  text-align: right;
+}
+ul,li {
+  list-style: none;
+  padding-left: 0;
+}
