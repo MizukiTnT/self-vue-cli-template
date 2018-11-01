@@ -1,12 +1,18 @@
 <template>
   <div class="home">
-    <div/>
+    <search-bar/>
+    <spread-board/>
   </div>
 </template>
 
 <script>
-export default {
+import { SearchBar, SpreadBoard } from './components'
 
+export default {
+  components: {
+    SearchBar,
+    SpreadBoard
+  }
 }
 </script>
 
