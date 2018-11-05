@@ -98,6 +98,7 @@ export default {
       .serve-wrapper {
         width: 1100px;
         height: 100%;
+        padding: 0 20px;
         margin: 0 auto;
         .code-wrapper {
           border-right: 1px solid #E8E8E8;
