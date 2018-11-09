@@ -11,11 +11,23 @@ export const constantRouterMap = [
     path: '/',
     component: Layout,
     redirect: '/index',
-    children: [{
-      path: '/index',
-      name: 'home',
-      component: () => import('@/views/home')
-    }]
+    children: [
+      {
+        path: 'index',
+        name: 'home',
+        component: () => import('@/views/home')
+      },
+      {
+        path: 'company',
+        name: 'company',
+        component: () => import('@/views/companyDetail')
+      },
+      {
+        path: 'search',
+        name: 'search',
+        component: () => import('@/views/Search')
+      }
+    ]
   },
   { path: '*', redirect: '/404' }
 ]
