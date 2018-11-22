@@ -1,11 +1,11 @@
 <template>
   <div class="dec-title">
     <div class="title">
-      <el-row :gutter="40" type="flex" align="middle">
-        <el-col :span="3" class="content">
+      <el-row type="flex" align="middle">
+        <el-col :span="4" class="content">
           {{ title }}
         </el-col>
-        <el-col :span="21" class="line"></el-col>
+        <el-col :span="20" class="line"></el-col>
       </el-row>
       <div class="dec"></div>
     </div>
@@ -29,7 +29,7 @@ export default {
     margin: 35px 0 20px;
     padding-bottom: 30px;
     .title {
-      margin-bottom: 20px;
+      margin-bottom: 35px;
       .content {
         color: #4A4A4A;
         font-size: 18px;

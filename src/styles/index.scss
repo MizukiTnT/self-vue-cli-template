@@ -87,3 +87,35 @@ ul,li {
   list-style: none;
   padding-left: 0;
 }
+
+// 简历页面公用样式
+.hide-view {
+  padding: 45px 100px 30px 20px;
+  background-color: #F9F9F9;
+  .control {
+    text-align: center;
+    >div {
+      display: inline-block;
+      cursor: pointer;
+      &.submit {
+        margin-right: 60px;
+        padding: 7px 17px;
+        background-color: #30BE7A;
+        color: #fff;
+        font-size: 16px;
+        border-radius: 17px;
+      }
+      &.cancel {
+        color: #aaa;
+      }
+    }
+  }
+}
+
+.resume-title {
+  font-size: 24px;
+  margin-bottom: 25px;
+}
+.resume-add-button {
+
+}

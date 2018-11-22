@@ -26,6 +26,19 @@ export const constantRouterMap = [
         path: 'search',
         name: 'search',
         component: () => import('@/views/Search')
+      },
+      {
+        path: 'jobDetail',
+        name: 'jobDetail',
+        component: () => import('@/views/JobDetail')
+      },
+      {
+        path: 'resume',
+        name: 'resume',
+        component: () => import('@/views/Resume'),
+        meta: {
+          keepAlive: true
+        }
       }
     ]
   },

@@ -21,6 +21,7 @@ export default {
     margin-right: 15px;
     padding: 4px 10px;
     font-size: 14px;
+    color: #A2A2A2;
     border: 1px solid #efefef;
     user-select: none;
   }
