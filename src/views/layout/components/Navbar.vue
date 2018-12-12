@@ -44,9 +44,12 @@ export default {
 
 <style rel="stylesheet/scss" lang="scss" scoped>
   .nav-wrapper {
+    position: sticky;
+    top: 0px;
     height: 60px;
     background-color: #fafafa;
     border-bottom: 1px solid #e6e6e6;
+    z-index: 1000;
     .user-nav {
       height: 100%;
       .body {

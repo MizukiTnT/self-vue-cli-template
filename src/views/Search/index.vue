@@ -24,7 +24,7 @@
 </template>
 
 <script>
-import { SearchBar, OptionBar, JobBox } from './components'
+import { SearchBar, OptionBar, JobBox } from '@/views/Search/components'
 export default {
   data() {
     return {

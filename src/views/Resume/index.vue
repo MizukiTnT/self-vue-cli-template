@@ -1,6 +1,6 @@
 <template>
   <div class="resume">
-    <div class="main">
+    <div class="main" ref="wrapper">
       <el-row :gutter="10">
         <el-col :span="18">
           <div class="body">
@@ -39,11 +39,11 @@
         <el-col :span="6">
           <div class="resume-nav">
             <div class="header">
-              <aside-blcok :uid="resumeData.uid" :abandonCompanyCount="resumeData.abandonCompanyCount"
+              <aside-block :uid="resumeData.uid" :abandonCompanyCount="resumeData.abandonCompanyCount"
               :likeCompanyCount="resumeData.likeCompanyCount" />
             </div>
-            <div class="float-board">
-              <float-board />
+            <div class="float">
+              <float-board/>
             </div>
           </div>
         </el-col>
@@ -54,8 +54,8 @@
 </template>
 
 <script>
-import {Willing, Exp, Evaluation, EducationExp, Charactor, FloatBoard} from './components'
-import AsideBlcok from '@/components/AsideBlock'
+import { Willing, Exp, Evaluation, EducationExp, Charactor, FloatBoard } from './components'
+import AsideBlock from '@/components/AsideBlock'
 export default {
   components: {
     Willing,
@@ -63,7 +63,7 @@ export default {
     Evaluation,
     EducationExp,
     Charactor,
-    AsideBlcok,
+    AsideBlock,
     FloatBoard
   },
   data() {

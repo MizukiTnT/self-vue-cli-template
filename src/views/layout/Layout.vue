@@ -19,9 +19,6 @@ export default {
     AppMain,
     TopNav,
     FooterNav
-  },
-  mounted() {
-
   }
 }
 </script>

@@ -172,8 +172,8 @@ export default {
 }
 </script>
 
-<style lang="scss">
-  .job-detail {
+<style lang="scss" scoped>
+  .job-detail /deep/ {
     .el-tabs__active-bar {
       background-color:#00B35D;
     }

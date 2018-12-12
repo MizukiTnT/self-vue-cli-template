@@ -170,13 +170,16 @@ export default {
     Box,
     HrPage,
     Dropdown
+  },
+  mounted() {
+
   }
 }
 </script>
 
-<style lang="scss">
+<style lang="scss" scoped>
 
-.home {
+.home /deep/ {
   padding-bottom: 80px;
   .container {
     width: 1100px;

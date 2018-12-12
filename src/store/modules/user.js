@@ -1,4 +1,4 @@
-import { login, logout, getInfo } from '@/api/login'
+import { login, logout, regist, getUserInfo, getCode } from '@/api/user'
 import { getToken, setToken, removeToken } from '@/utils/auth'
 
 const user = {
@@ -6,7 +6,8 @@ const user = {
     token: getToken(),
     name: '',
     avatar: '',
-    roles: []
+    mobile: '',
+    id: '',
   },
 
   mutations: {
@@ -19,8 +20,11 @@ const user = {
     SET_AVATAR: (state, avatar) => {
       state.avatar = avatar
     },
-    SET_ROLES: (state, roles) => {
-      state.roles = roles
+    SET_MOBILE: (state, mobile) => {
+      state.mobile = mobile
+    },
+    SET_ID: (state, id) => {
+      state.id = id
     }
   },
 
@@ -29,8 +33,8 @@ const user = {
     Login({ commit }, userInfo) {
       const username = userInfo.username.trim()
       return new Promise((resolve, reject) => {
-        login(username, userInfo.password).then(response => {
-          const data = response.data
+        login(username, userInfo.password, userInfo.code).then(response => {
+          const data = response.info
           setToken(data.token)
           commit('SET_TOKEN', data.token)
           resolve()
@@ -41,22 +45,53 @@ const user = {
       })
     },
 
-    // 获取用户信息
-    GetInfo({ commit, state }) {
+    Register({commit}, registInfo) {
       return new Promise((resolve, reject) => {
-        getInfo(state.token).then(response => {
-          const data = response.data
-          console.log(data)
-          // 下面这部分是区分了权限的
-          // if (data.roles && data.roles.length > 0) { // 验证返回的roles是否是一个非空数组
-          //   commit('SET_ROLES', data.roles)
-          // } else {
-          //   reject('getInfo: roles must be a non-null array !')
-          // }
-          commit('SET_NAME', data.name)
-          commit('SET_AVATAR', data.avatar)
-          resolve(response)
+        regist(registInfo.mobile, registInfo.code, registInfo.name, registInfo.password ).then((res) => {
+          console.log(res)
+          setToken(res.token)
+          commit('SET_TOKEN', res.token)
+          resolve()
+        }).catch(err => {
+          reject(err)
+        })
+      })
+    },
+
+    // 获取用户信息
+    // UpdateUserInfo({ commit, state }) {
+    //   return new Promise((resolve, reject) => {
+    //     getInfo(state.token).then(res => {
+    //       commit('SET_NAME', res.name)
+    //       commit('SET_AVATAR', res.avatar)
+    //       console.log(res)
+    //       resolve(response)
+    //     }).catch(error => {
+    //       reject(error)
+    //     })
+    //   })
+    // },
+
+    GetUserInfo({commit}) {
+      return new Promise((resolve, reject) => {
+
+        getUserInfo().then((res) => {
+          console.log(res)
+          commit('SET_NAME', res.info.name)
+          commit('SET_AVATAR', res.info.headImage)
+          commit('SET_MOBILE', res.info.mobile)
         }).catch(error => {
+          reject(error)
+        })
+
+      })
+    },
+
+    GetCode({}, payload) {
+      console.log(payload)
+      return new Promise((resolve, reject) => {
+        getCode(payload.mobile, payload.type).then(resolve()).catch(error => {
+          console.log(error)
           reject(error)
         })
       })
@@ -67,7 +102,6 @@ const user = {
       return new Promise((resolve, reject) => {
         logout(state.token).then(() => {
           commit('SET_TOKEN', '')
-          commit('SET_ROLES', [])
           removeToken()
           resolve()
         }).catch(error => {

@@ -6,21 +6,35 @@
         <router-link to="">进入企业版</router-link>
       </div>
       <div class="user-options">
-        <span>欢迎回来</span>
-        <!-- 用户下拉菜单 -->
-        <el-dropdown>
-          <span class="el-dropdown-link">
-            <span>小明</span>
-            <i class="el-icon-arrow-down el-icon--right"/>
-          </span>
-          <el-dropdown-menu slot="dropdown">
-            <el-dropdown-item>我的简历</el-dropdown-item>
-            <el-dropdown-item>投递箱</el-dropdown-item>
-            <el-dropdown-item>收藏夹</el-dropdown-item>
-            <el-dropdown-item>退出</el-dropdown-item>
-          </el-dropdown-menu>
-        </el-dropdown>
-        <!-- 用户下拉菜单 -->
+        <span v-if="name">
+          <span>欢迎回来</span>
+          <!-- 用户下拉菜单 -->
+          <el-dropdown>
+            <span class="el-dropdown-link">
+              <span>{{ name }}}</span>
+              <i class="el-icon-arrow-down el-icon--right"/>
+            </span>
+            <el-dropdown-menu slot="dropdown">
+              <el-dropdown-item>
+                <router-link to="/resume">我的简历</router-link>
+              </el-dropdown-item>
+              <el-dropdown-item>
+                <router-link to="/deliver">投递箱</router-link>
+              </el-dropdown-item>
+              <el-dropdown-item>
+                <router-link to="/collectResume">收藏夹</router-link>
+              </el-dropdown-item>
+              <el-dropdown-item @click="logout">退出</el-dropdown-item>
+            </el-dropdown-menu>
+          </el-dropdown>
+          <!-- 用户下拉菜单 -->
+
+        </span>
+
+        <span>
+
+        </span>
+
         <span>
           <span>400-886-97979</span>
           <i/>
@@ -31,8 +45,13 @@
 </template>
 
 <script>
+import { mapGetters } from 'vuex'
 export default {
-
+   computed: {
+     ...mapGetters([
+       'name'
+     ])
+   }
 }
 </script>
 

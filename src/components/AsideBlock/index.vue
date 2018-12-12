@@ -47,8 +47,8 @@ export default {
 
 <style lang="scss" scoped>
   .inline-block {
-    margin-top: 22px;
     padding: 30px 30px 35px;
+    background-color: #fff;
     border: 1px solid #E0F1E7;
     border-radius: 4px;
     text-align: center;

@@ -10,7 +10,10 @@ import '@/styles/index.scss' // global css
 import App from './App'
 import router from './router'
 import store from './store'
-import './mock'
+
+import { asyncRouteMap } from './router'
+
+router.addRoutes(asyncRouteMap.individual.concat(asyncRouteMap.company))
 import '@/icons' // icon
 import '@/permission' // permission control
 
