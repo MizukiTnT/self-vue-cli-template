@@ -9,7 +9,7 @@
             <el-row>
               <el-col :span="8" class="label">求职状态:</el-col>
               <el-col :span="16" class="content">
-                {{ condition }}
+                {{ modifiedWill.workStatus | conditionFilter }}
               </el-col>
             </el-row>
           </el-col>
@@ -144,152 +144,35 @@
 
 <script>
 import mixin from './mixin'
+import { typeFilter, salaryFilter, jobFilter, conditionFilter } from '@/mixin/filters'
+import { expectWork, salaryOptions, industryOptions, radioOptions } from '@/mixin/options'
 export default {
-  mixins: [mixin],
+  mixins: [
+    mixin,
+    typeFilter,
+    salaryFilter,
+    jobFilter,
+    conditionFilter,
+    expectWork,
+    salaryOptions,
+    industryOptions,
+    radioOptions
+  ],
   props: {
     will: {
       type: Object
-    }
-  },
-  computed: {
-    condition() {
-      let state = this.modifiedWill.workStatus
-      return state === '1' ? '目前暂无跳槽打算' :
-      state === '2' ? '已离职' :
-      state === '3' ? '在职 可立即上岗' :
-      state === '4' ? '在职 会考虑更好的工作' :
-      state === '5' ? '应届毕业生' :
-      ''
     }
   },
   data() {
     return {
       // 记录更改内容对象
       modifiedWill: {},
-      //工作类型选项
-      radioOptions: [
-        {
-          label: '全职',
-          value: '1'
-        },
-        {
-          label: '兼职',
-          value: '2'
-        },
-        {
-          label: '实习',
-          value: '3'
-        }
-      ],
-      // 预期工作选项
-      expectWork: [
-        {
-          label: '研发生产',
-          value: '1'
-        },
-        {
-          label: '市场服务',
-          value: '2'
-        },
-        {
-          label: '销售管理',
-          value: '3'
-        },
-        {
-          label: '人事行政',
-          value: '4'
-        },
-        {
-          label: '其他',
-          value: '5'
-        }
-      ],
-      // 预期薪水选项
-      salaryOptions: [
-        {
-          value: '1',
-          label: '面议'
-        },
-        {
-          value: '2',
-          label: '2k以下'
-        },
-        {
-          value: '3',
-          label: '2k-5k'
-        },
-        {
-          value: '4',
-          label: '5k-10k'
-        },
-        {
-          value: '5',
-          label: '10k-15k'
-        },
-        {
-          value: '6',
-          label: '15k-25k'
-        },
-        {
-          value: '7',
-          label: '25k-50k'
-        },
-        {
-          value: '8',
-          label: '50k以上'
-        }
-      ],
-      // 预期行业选项
-      industryOptions: [
-        {
-          label: '互联网/电子商务',
-          value: '1'
-        },
-        {
-          label: '计算机软件',
-          value: '2'
-        },
-        {
-          label: '农业相关',
-          value: '3'
-        },
-        {
-          label: '销售',
-          value: '4'
-        }
-      ]
     }
   },
   methods: {
     cancelModify() {
       this.modifiedWill = JSON.parse(JSON.stringify(this.will))
       this.hiddenShow = false
-    }
-  },
-  filters: {
-    jobFilter(type) {
-      return type === '1' ? '研发生产' :
-      type === '2' ? '市场服务' :
-      type === '3' ? '销售管理' :
-      type === '4' ? '人事行政' :
-      type === '5' ? '其它' :
-      ''
-    },
-    salaryFilter(type) {
-      return type === '1' ? '面议' :
-      type === '2' ? '2k以下' :
-      type === '3' ? '2-5k' :
-      type === '4' ? '5-10k' :
-      type === '5' ? '10k-15k' :
-      type === '6' ? '15k-25k' :
-      type === '7' ? '25k-50k' :
-      type === '8' ? '50k以上' :
-      ''
-    },
-    typeFilter(type) {
-      return type === '1' ? '全职' :
-      type === '2' ? '兼职' :
-      type === '3' ? '实习' : ''
     }
   },
   beforeMount() {

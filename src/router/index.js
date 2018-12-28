@@ -42,7 +42,8 @@ export const asyncRouteMap = {
       component: Layout,
       children: [
         {
-          path: '',
+          path: ':id',
+          props: true,
           component: () => import('@/views/PreviewResume')
         }
       ],
@@ -111,6 +112,7 @@ export const asyncRouteMap = {
           children: [
             {
               path: 'onlineJob',
+              name: 'onlineJob',
               component: () => import('@/views/ManageLayout/pages/jobManage/online'),
               meta: {
                 title: '有效职位'
@@ -118,6 +120,7 @@ export const asyncRouteMap = {
             },
             {
               path: 'offlineJob',
+              name: 'offlineJob',
               component: () => import('@/views/ManageLayout/pages/jobManage/offline'),
               meta: {
                 title: '已下线职位'
@@ -125,6 +128,7 @@ export const asyncRouteMap = {
             },
             {
               path: 'newJob',
+              name: 'newJob',
               component: () => import('@/views/ManageLayout/pages/jobManage/newJob'),
               meta: {
                 title: '发布新职位'
@@ -142,6 +146,7 @@ export const asyncRouteMap = {
           children: [
             {
               path: 'waitToDeal',
+              name: 'waitToDeal',
               component: () => import('@/views/ManageLayout/pages/resumeManage/waitToDeal'),
               meta: {
                 title: '待处理'
@@ -149,6 +154,7 @@ export const asyncRouteMap = {
             },
             {
               path: 'reported',
+              name: 'reported',
               component: () => import('@/views/ManageLayout/pages/resumeManage/reported'),
               meta: {
                 title: '已通知面试'
@@ -156,6 +162,7 @@ export const asyncRouteMap = {
             },
             {
               path: 'unsatisfide',
+              name: 'unsatisfide',
               component: () => import('@/views/ManageLayout/pages/resumeManage/unsatisfide'),
               meta: {
                 title: '不合适'
@@ -173,6 +180,7 @@ export const asyncRouteMap = {
           children: [
             {
               path: 'setInfo',
+              name: 'setInfo',
               component: () => import('@/views/ManageLayout/pages/accountManage/setInfo'),
               meta: {
                 title: '个人信息'
@@ -180,12 +188,93 @@ export const asyncRouteMap = {
             },
             {
               path: 'setEmail',
+              name: 'setEmail',
               component: () => import('@/views/ManageLayout/pages/accountManage/setEmail'),
               meta: {
                 title: '接收简历邮箱'
               }
             }
           ]
+        }
+      ]
+    },
+    {
+      path: '/account',
+      name: 'account',
+      redirect: '/account/open',
+      component: Layout,
+      meta: {
+        title: '账户'
+      },
+      children: [
+        {
+          path: 'open',
+          name: 'openAccount',
+          component: () => import('@/views/Account/open'),
+          meta: {
+            title: '开通账户'
+          }
+        }
+      ]
+    },
+    // {
+    //   path: '/companyCenter',
+    //   name: 'companyCenter',
+    //   redirect: '/companyCenter/index',
+    //   component: Layout,
+    //   meta: {
+    //     title: '企业中心'
+    //   },
+    //   children: [
+    //     {
+    //       path: 'index',
+    //       name: 'edit',
+    //       component: () => import('@/views/CompanyCenter/home'),
+    //       meta: {
+    //         title: '开通'
+    //       }
+    //     }
+    //   ]
+    // }
+    {
+      path: '/recruitService',
+      name: 'recruitService',
+      component: Layout,
+      children: [
+        {
+          path: '',
+          component: () => import('@/views/Recruit'),
+          meta: {
+            title: '开通招聘服务'
+          }
+        }
+      ]
+    },
+    {
+      path: '/companyIndex',
+      name: 'companyIndex',
+      component: Layout,
+      children: [
+        {
+          path: '',
+          component: () => import('@/views/CompanyHome'),
+          meta: {
+            title: '概况'
+          }
+        }
+      ]
+    },
+    {
+      path: '/companyCenter',
+      name: 'companyCenter',
+      component: Layout,
+      children: [
+        {
+          path: '',
+          component: () => import('@/views/CompanyCenter'),
+          meta: {
+            title: '公司主页'
+          }
         }
       ]
     }

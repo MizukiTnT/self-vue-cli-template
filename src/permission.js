@@ -23,10 +23,9 @@ router.beforeEach((to, from, next) => {
 })
 
 router.afterEach((to, from) => {
-  console.log(to)
-  let title = '来融金服'
+  let title = '来融农资平台'
   to.matched.map(route => {
-    titile += route.matched.title || ''
+    title += route.meta.title ? '-' + route.meta.title : ''
   })
   document.title = title
   NProgress.done()

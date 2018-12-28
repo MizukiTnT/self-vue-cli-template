@@ -84,6 +84,7 @@ export default {
   components: {
     Block
   },
+  props: ['id'],
   data() {
     return {
       resumeData: {

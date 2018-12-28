@@ -5,7 +5,7 @@
       <div v-if="index != 0" class="view">
         <div class="universe">{{ modifiededucation.school }}</div>
         <div class="duration">{{ modifiededucation.major }}</div>
-        <div class="background">{{ background }}</div>
+        <div class="background">{{ modifiededucation.education | educateFilter}}</div>
         <div class="specialty">
           <div class="time">
             {{ modifiededucation.startTime | timeFilter }} - {{ modifiededucation.endTime | timeFilter }}
@@ -65,7 +65,11 @@
 
 <script>
 import { deepClone } from '@/utils'
+import { educateFilter } from '@/mixin/filters'
+import { educationOptions } from '@/mixin/options'
+
 export default {
+  mixins: [educationOptions, educateFilter],
   props: {
     education: {
       type: Object
@@ -77,44 +81,13 @@ export default {
   data() {
     return {
       modifiedEducation: {},
-      hide: false,
-      educationOptions: [
-        {
-          label: '高中/高中以下',
-          value: '1'
-        },
-        {
-          label: '大专',
-          value: '2'
-        },
-        {
-          label: '本科',
-          value: '3'
-        },
-        {
-          label: '硕士',
-          value: '4'
-        },
-                {
-          label: '博士',
-          value: '5'
-        }
-      ]
+      hide: false
     }
   },
   computed: {
     show() {
       return this.$store.state.resume.educationActive === this.index
-    },
-    background() {
-      let education = this.education.education
-      return education === '1' ? '高中/高中以下' :
-      education === '2' ? '大专' :
-      education === '3' ? '本科' :
-      education === '4' ? '硕士' :
-      education === '5' ? '博士' :
-      ''
-    },
+    }
   },
   methods: {
     cancelModify() {
