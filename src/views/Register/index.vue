@@ -43,7 +43,7 @@
           我已阅读并接受
           <router-link to="">《使用协议》</router-link>
         </div>
-        <div class="nav">已有账号, 请<router-link to="">登录</router-link></div>
+        <div class="nav">已有账号, 请<router-link to="/login">登录</router-link></div>
       </div>
     </block>
   </div>
@@ -78,9 +78,9 @@ export default {
           { required: true, message: '手机号不能为空', trigger: 'blur' },
           { len:11, message: '手机号格式不正确', trigger: 'blur' }
         ],
-        // code: [
-        //   { required: true, message: '验证码不能为空', trigger: 'blur' }
-        // ],
+        code: [
+          { required: true, message: '验证码不能为空', trigger: 'blur' }
+        ],
         name: [
           { required: true, message: '账号不能为空', trigger: 'blur' }
         ],
@@ -97,10 +97,6 @@ export default {
       this.showpass = !this.showpass
       this.inputType = this.showpass ? 'text' : 'password'
     },
-    // 获取验证码
-    sendSrvCode() {
-
-    },
     getCode() {
       let time = this.timeLimit
       if(this.registerData.mobile === '') { // 判断手机号是否输入
@@ -109,6 +105,15 @@ export default {
       }
       if(!this.sendCode) this.sendCode = true // 只要点击过就变成true
       this.disabled = true
+      this.codeText = `${time--}秒后可重新获取`
+      this.interval = setInterval(() => {
+        this.codeText = `${time--}秒后可重新获取`
+        if(time === 0) {
+          this.disabled = false
+          this.codeText = '获取验证码'
+          clearInterval(this.interval)
+        }
+      } ,1000)
       this.$store.dispatch('GetCode', {
         type: '1',
         mobile: this.registerData.mobile
@@ -118,14 +123,6 @@ export default {
         this.codeText = '获取验证码'
         this.disabled = false
       })
-      this.interval = setInterval(() => {
-        this.codeText = `${time--}秒后可重新获取`
-        if(time === 0) {
-          this.disabled = false
-          this.codeText = '获取验证码'
-          clearInterval(this.interval)
-        }
-      } ,1000)
     },
     register() {
       this.$refs.registerForm.validate((valid) => {
@@ -134,11 +131,17 @@ export default {
             this.loading = true
             if(this.sendCode) { // 判断是否真的点击验证码
               this.$store.dispatch('Register', this.registerData).then(() => {
+                console.log(12323)
                 this.loading = false
                 this.$store.dispatch('GetUserInfo')
                 console.log(this.$store.state)
                 this.$router.push('/index')
               }).catch((err) => {
+                this.$notify.warning({
+                  title: '提示',
+                  message: err
+                })
+                console.log(123)
                 this.loading = false
               })
             } else {

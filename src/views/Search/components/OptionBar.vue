@@ -1,9 +1,9 @@
 <template>
   <div class='option-bar'>
-    <div v-for='item in searchOptions' :key='item.optionType' class='options-wrapper'>
-      <div class='name'>{{ item.name }}:</div>
-      <div v-for='option in item.optionList' class='option'>
-        <span @click='handleSelect(item, option.value)' :class='{active: option.value == item.active}'>{{ option.label }}</span>
+    <div v-for='(item, key) in searchOptions' :key='key' class='options-wrapper'>
+      <div class='name'>{{ key === 'workYears' ? '工作经验' : key === 'education' ? '学历要求' : key === 'monthSalarys' ? '月薪范围' : key === 'nature' ? '工作性质' : key === 'type' ? '职位类别' : '' }}:</div>
+      <div v-for='option in item' class='option'>
+        <span @click='handleSelect( option.value, key)' :class='{active: trans[key] === option.value}'>{{ option.name }}</span>
       </div>
     </div>
   </div>
@@ -13,189 +13,55 @@
 export default {
   data() {
     return {
-      searchOptions: [
-        {
-          name: '工作经验',
-          active: 0,
-          optionType: 0,
-          optionList: [
-            {
-              label: '不限',
-              value: 0
-            },
-            {
-              label: '应届毕业生',
-              value: 1
-            },
-            {
-              label: '三年以下',
-              value: 2
-            },
-            {
-              label: '3-5年',
-              value: 3
-            },
-            {
-              label: '5-10年',
-              value: 4
-            },
-            {
-              label: '10年以上',
-              value: 5
-            },
-            {
-              label: '不要求',
-              value: 6
-            }
-          ]
-        },
-        {
-          name: '工作经验',
-          active: 0,
-          optionType: 1,
-          optionList: [
-            {
-              label: '不限',
-              value: 0
-            },
-            {
-              label: '应届毕业生',
-              value: 1
-            },
-            {
-              label: '三年以下',
-              value: 2
-            },
-            {
-              label: '3-5年',
-              value: 3
-            },
-            {
-              label: '5-10年',
-              value: 4
-            },
-            {
-              label: '10年以上',
-              value: 5
-            },
-            {
-              label: '不要求',
-              value: 6
-            }
-          ]
-        },
-        {
-          name: '工作经验',
-          active: 0,
-          optionType: 2,
-          optionList: [
-            {
-              label: '不限',
-              value: 0
-            },
-            {
-              label: '应届毕业生',
-              value: 1
-            },
-            {
-              label: '三年以下',
-              value: 2
-            },
-            {
-              label: '3-5年',
-              value: 3
-            },
-            {
-              label: '5-10年',
-              value: 4
-            },
-            {
-              label: '10年以上',
-              value: 5
-            },
-            {
-              label: '不要求',
-              value: 6
-            }
-          ]
-        },
-        {
-          name: '工作经验',
-          active: 0,
-          optionType: 3,
-          optionList: [
-            {
-              label: '不限',
-              value: 0
-            },
-            {
-              label: '应届毕业生',
-              value: 1
-            },
-            {
-              label: '三年以下',
-              value: 2
-            },
-            {
-              label: '3-5年',
-              value: 3
-            },
-            {
-              label: '5-10年',
-              value: 4
-            },
-            {
-              label: '10年以上',
-              value: 5
-            },
-            {
-              label: '不要求',
-              value: 6
-            }
-          ]
-        },
-        {
-          name: '工作经验',
-          active: 0,
-          optionType: 4,
-          optionList: [
-            {
-              label: '不限',
-              value: 0
-            },
-            {
-              label: '应届毕业生',
-              value: 1
-            },
-            {
-              label: '三年以下',
-              value: 2
-            },
-            {
-              label: '3-5年',
-              value: 3
-            },
-            {
-              label: '5-10年',
-              value: 4
-            },
-            {
-              label: '10年以上',
-              value: 5
-            },
-            {
-              label: '不要求',
-              value: 6
-            }
-          ]
-        }
-      ]
+      searchOptions: {
+        workYears: '',
+        education: '',
+        monthSalarys: '',
+        nature: '',
+        type: ''
+      },
+      trans: {
+        workYears: 0,
+        education: 0,
+        monthSalarys: 0,
+        nature: 0,
+        type: 0
+      }
     }
   },
   methods:{
-    handleSelect(item, value) {
-      item.active = value
-      this.$emit('transOptions', this.searchOptions)
+    // 提交选项
+    handleSelect(value, key) {
+      this.trans[key] = value
+      let obj = {}
+      Object.keys(this.trans).map(key => {
+        if(this.trans[key] != 0) {
+          obj[key] = this.trans[key]
+        }
+      })
+      this.$store.commit('COMMIT_ITEM', obj)
+    }
+  },
+  // 拉取数据并且赋值 不这样视图没办法和数据绑定
+  beforeMount() {
+    // 因为传过来的结果没带不限的选项 而在dom中需要出现
+    if (Object.keys(this.$store.state.search.searchOptions).length > 0) {
+      this.searchOptions = this.$store.state.search.searchOptions
+    } else {
+      this.$store.dispatch('GetOptions').then((res) => {
+        this.searchOptions.workYears = res.workYears
+        this.searchOptions.education = res.educations
+        this.searchOptions.monthSalarys = res.monthSalarys
+        this.searchOptions.nature = res.companyScales
+        this.searchOptions.type = res.companyTypes
+        Object.keys(this.searchOptions).map(item => {
+          this.searchOptions[item].unshift({
+            name: '不限',
+            value: 0
+          })
+        })
+        this.$store.commit('COMMIT_OPTIONS', this.searchOptions)
+      })
     }
   }
 }

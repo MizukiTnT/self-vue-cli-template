@@ -12,12 +12,16 @@
             />
           </el-form-item>
           <el-form-item prop="code">
-            <el-input v-model="loginData.code" placeholder="请输入图形验证码">
-              <div slot="append" class="code">获取验证码</div>
+            <el-input v-model="loginData.code" maxlength="4" @focus="loginData.code = ''" placeholder="请输入图形验证码">
+              <div slot="append" class="code">
+                <img
+                @click="getImgCode" :src="imgCodeUrl"
+                class="code">
+              </div>
             </el-input>
           </el-form-item>
           <el-form-item prop="password">
-            <el-input       v-model="loginData.password"
+            <el-input v-model="loginData.password" @keyup.enter="goLogin"
              placeholder="请输密码"
              :type="inputType">
               <div slot="append" class="i-input_icons">
@@ -31,8 +35,8 @@
             </el-input>
           </el-form-item>
         </el-form>
-        <el-button class="button" @click="goLogin">立即登录</el-button>
-        <div class="nav">还没注册账号? 请<router-link to="">注册</router-link></div>
+        <el-button :loading="isLoading" class="button" @click="goLogin">立即登录</el-button>
+        <div class="nav">还没注册账号? 请<router-link to="/register">注册</router-link></div>
       </div>
     </block>
   </div>
@@ -40,6 +44,7 @@
 
 <script>
 import block from '@/components/LoginBlock'
+import { uuid } from '@/utils'
 export default {
   components: {
     block
@@ -47,11 +52,14 @@ export default {
   data() {
     return {
       showpass: false,
+      isLoading: false,
       loginData: {
-        username: '',
+        name: '',
         password: '',
         code: ''
       },
+      uid: '',
+      imgCodeUrl: '',
       inputType: 'password',
       rules: {
         username: [
@@ -72,26 +80,37 @@ export default {
       this.inputType = this.showpass ? 'text' : 'password'
     },
     // 获取验证码
-    sendSrvCode() {
-
+    async getImgCode() {
+      this.loginData.uid = uuid()
+      console.log(this.uid)
+      this.imgCodeUrl = await this.$store.dispatch('GetImgCode', this.loginData.uid)
     },
     goLogin() {
       this.$refs.loginForm.validate((valid) => {
         if (valid) {
-          console.log(this.logindata)
-          // this.$store.dispatc('Login', this.loginData)
+          this.isLoading = true
+          this.$store.dispatch('Login', this.loginData).then((res) => {
+            this.$router.replace('/')
+            this.isLoading = false
+          }, () => {
+            this.isLoading = false
+          })
         } else {
           return false
         }
       })
     }
+  },
+  beforeMount() {
+
+    this.getImgCode()
   }
 
 }
 </script>
 
 <style lang="scss" scoped>
-  .login {
+  .login /deep/ {
     .title {
       margin-bottom: 30px;
       padding-left: 10px;
@@ -102,6 +121,10 @@ export default {
     .adv {
       height: 100%;
       background-color: #F4F4F4;
+    }
+    .code {
+      width: 70px;
+      height: 30px;
     }
     .operation {
       padding: 30px 40px;

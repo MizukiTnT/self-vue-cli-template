@@ -2,21 +2,30 @@ import axios from 'axios'
 import qs from 'qs'
 import { Message, Notification } from 'element-ui'
 import store from '../store'
-import { getToken } from '@/utils/auth'
+import { getToken, removeToken, removeIdentity } from '@/utils/auth'
+import router from '../router'
+
+
 
 // 创建axios实例
+// axios.defaults.withCredentials = true
 const service = axios.create({
   baseURL: process.env.BASE_API, // api的base_url
-  timeout: 5000 // 请求超时时间
+  timeout: 5000, // 请求超时时间
+  withCredentials: true,
+  crossDomain: true
 })
 
 // request拦截器
 service.interceptors.request.use(
   config => {
     console.log(config)
-    config.data = qs.stringify(config.data) // 处理post请求参数
+    if(config.method === 'post') {
+      config.data = qs.stringify(config.data) // 处理post请求参数
+    }
+
     if (store.getters.token) {
-      config.headers['token'] = getToken() // 让每个请求携带自定义token 请根据实际情况自行修改
+      config.headers['token'] = getToken() // 让每个请求携带自定义token
     }
     return config
   },
@@ -30,47 +39,69 @@ service.interceptors.request.use(
 // respone拦截器
 service.interceptors.response.use(
   response => {
-    /**
-     * code为非20000是抛错 可结合自己业务进行修改
-     */
+
     const res = response.data
-    if (res.code !== 200) {
-      console.log(res)
-      Notification.error({
+    /**
+     * code为200 成功
+     */
+    console.log(res)
+    if (res.code === 200) {
+      return res
+    }
+    if (res.code === 500) {
+      Notification({
+        title: '警告',
+        message: res.msg,
+        type: 'warning'
+      })
+      return Promise.reject(res.msg)
+    }
+    if (res.code === 404) {
+      router.replace('/404')
+    }
+    /**
+     * code为11 登录超时
+     */
+    if (res.code === -11) { // 超时则把store和cookie中的id和token删除 并跳转登录页面(后期可增加一个错误处理页面 作为跳的中转)
+      console.log('测试有没有用')
+      router.replace('/login')
+      Notification({
         title: '提示',
         message: res.msg,
-        duration: 2500
+        type: 'warning'
       })
+      removeToken()
+      removeIdentity()
+      store.user.commit('SET_TOKEN', '')
+      store.user.commit('SET_IDENTITY', '')
+      location.reload()
+    }
+    /**
+     * code为-1 各种意义上的错误 包括密码错误等
+     */
+    if (res.code === -1) {
+      Notification({
+        title: '警告',
+        message: res.msg,
+        type: 'warning'
+      })
+      return Promise.reject(res.msg)
+    }
 
-      // 50008:非法的token; 50012:其他客户端登录了;  50014:Token 过期了;
-      // if (res.code === 50008 || res.code === 50012 || res.code  === 50014) {
-      //   MessageBox.confirm(
-      //     '你已被登出，可以取消继续留在该页面，或者重新登录',
-      //     '确定登出',
-      //     {
-      //       confirmButtonText: '重新登录',
-      //       cancelButtonText: '取消',
-      //       type: 'warning'
-      //     }
-      //   ).then(() => {
-      //     store.dispatch('FedLogOut').then(() => {
-      //       location.reload() // 为了重新实例化vue-router对象 避免bug
-      //     })
-      //   })
-      // }
-      return Promise.reject('error')
-    } else {
-      return response.data
+    /**
+     * 转buffer为图片
+     */
+    if (response.headers['content-type'] === 'image/jpeg') {
+      return 'data:image/png;base64,' + btoa(
+        new Uint8Array(response.data).reduce((data, byte) => data + String.fromCharCode(byte), '')
+      )
     }
 
   },
+  // 还需一个错误页面
   error => {
-    console.log('err' + error) // for debug
-    Notification.error({
-      title: '提示',
-      message: error,
-      duration: 2500
-    })
+    // router.replace('/404')
+
     return Promise.reject(error)
   }
 )

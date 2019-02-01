@@ -2,7 +2,7 @@
   <div class="exper">
     <div class="wrapper" @mouseenter="hide = true" @mouseleave="hide = false">
       <!-- 显示层 -->
-      <div v-if="index != 0" class="view">
+      <div class="view">
         <div class="companyname">{{ experData.companyName }}</div>
         <div class="hover">
           <div :class="{ hide : hide }" class="time">
@@ -14,7 +14,7 @@
           </div>
         </div>
         <div class="jobname">{{ experData.positionName }}</div>
-        <div class="desc">{{ experData.describes }}</div>
+        <div class="desc" v-html="experData.describes"></div>
       </div>
       <!-- 显示层 -->
       <!-- 编辑层 -->
@@ -22,7 +22,8 @@
         <div v-show="show" class="hide-view">
           <el-form
           :model="modifiedExp"
-          ref="charact"
+          ref="exper"
+          :rules="expRules"
           label-width="95px"
           label-position="left"
           >
@@ -33,13 +34,13 @@
             <el-form-item label="职位名称" prop="positionName">
                 <el-input type="text" placeholder="职位名称" v-model="modifiedExp.positionName"></el-input>
             </el-form-item>
-            <el-form-item label="在职时间" prop="startTime">
+            <el-form-item label="在职时间" prop="linkTime">
             <el-date-picker
               v-model="modifiedExp.linkTime"
               placeholder="选择范围"
               format="yyyy 年 M 月"
               type="daterange"
-              value-format="timestamp"
+              value-format="yyyy-MM"
               />
           </el-form-item>
             <el-form-item label="工作描述" prop="describes">
@@ -52,7 +53,7 @@
             </el-form-item>
           </el-form>
           <div class="control">
-            <div @click="" class="submit">保存并更新</div>
+            <el-button @click="submit" :loading="loading" class="submit">保存并更新</el-button>
             <div @click="cancelModify" class="cancel">取消</div>
           </div>
         </div>
@@ -63,7 +64,6 @@
 </template>
 
 <script>
-import { deepClone } from '@/utils'
 export default {
   props: {
     experData: {
@@ -76,7 +76,14 @@ export default {
   data() {
     return {
       modifiedExp: {},
-      hide: false
+      hide: false,
+      loading: false,
+      expRules: {
+        companyName: [{ required: true, message: '请填写公司名称', trigger: ['blur', 'change'] }],
+        positionName: [{ required: true, message: '请填写职位名称', trigger: ['blur', 'change'] }],
+        linkTime: [{ required: true, message: '请选择在职时间', trigger: ['blur', 'change'] }],
+        describes: [{ required: true, message: '请填写工作描述', trigger: ['blur', 'change'] }],
+      },
     }
   },
   computed: {
@@ -87,19 +94,53 @@ export default {
   methods: {
     cancelModify() {
       this.$store.dispatch('ChangeActive', '')
-      this.modifiedExp = JSON.parse(JSON.stringify(this.experData))
+      this.initData()
     },
     showHidden() {
       this.$store.dispatch('ChangeActive', this.index)
+    },
+    initData() {
+      this.modifiedExp = {
+        companyName:  this.experData.companyName,
+        positionName:   this.experData.positionName,
+        linkTime: [ this.experData.startTime,   this.experData.endTime ],
+        describes: this.experData.describes.replace(/<br\/>/g, "\n")
+      }
+    },
+    submit() {
+      this.$refs.exper.validate(valid => {
+        if (valid) {
+          this.loading = true
+          this.$store.dispatch('UpdateExp', {
+            companyName: this.modifiedExp.companyName,
+            positionName: this.modifiedExp.positionName,
+            startTime: this.modifiedExp.linkTime[0],
+            endTime: this.modifiedExp.linkTime[1],
+            describes: this.modifiedExp.describes.replace(/\r\n/g, '<br/>').replace(/\n/g, '<br/>').replace(/\s/g, ' '),
+            id: this.experData.id
+          }).then(res => {
+            this.$store.dispatch('GetMyResume').then(() => {
+              this.cancelModify()
+            })
+          },err => {
+            this.loading = false
+          })
+        } else {
+          return  false
+        }
+      })
     }
   },
   beforeMount() {
-    this.modifiedExp = JSON.parse(JSON.stringify(this.experData))
+    this.initData()
   },
   filters: {
     timeFilter(time) {
-      let parseTime = new Date(+time)
-      return parseTime.getFullYear() + '-' + (parseTime.getMonth() + 1)
+      let parseTime = new Date(time).getTime()
+      parseTime = new Date(parseTime)
+      let y = parseTime.getFullYear()
+      let m = parseTime.getMonth() + 1
+      return y + "." + m
     }
   }
 }

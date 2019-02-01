@@ -2,13 +2,13 @@
   <div class="educate-exp">
     <div class="wrapper" @mouseenter="hide = true" @mouseleave="hide = false">
       <!-- 显示层 -->
-      <div v-if="index != 0" class="view">
-        <div class="universe">{{ modifiededucation.school }}</div>
-        <div class="duration">{{ modifiededucation.major }}</div>
-        <div class="background">{{ modifiededucation.education | educateFilter}}</div>
+      <div class="view">
+        <div class="universe">{{ education.school }}</div>
+        <div class="duration">{{ education.major }}</div>
+        <div class="background">{{ education.education | educateFilter}}</div>
         <div class="specialty">
           <div class="time">
-            {{ modifiededucation.startTime | timeFilter }} - {{ modifiededucation.endTime | timeFilter }}
+            {{ education.startTime | timeFilter }} - {{ education.endTime | timeFilter }}
           </div>
         </div>
 
@@ -22,38 +22,39 @@
       <transition name="el-fade-in-linear">
         <div v-show="show" class="hide-view">
           <el-form
-          :model="modifiededucation"
-          ref="charact"
+          :model="modifiedEducation"
+          ref="education"
+          :rules="educationRule"
           label-width="95px"
           label-position="left"
           >
             <el-form-item label="学校名称" prop="school">
-              <el-input v-model="modifiededucation.school"
+              <el-input v-model="modifiedEducation.school"
               placeholder="学校名称"/>
             </el-form-item>
             <el-form-item label="学历" prop="education">
-              <el-select v-model="modifiededucation.education" placeholder="选择学历">
+              <el-select v-model="modifiedEducation.education" placeholder="选择学历">
                 <el-option v-for="educate in educationOptions" :label="educate.label" :value="educate.value"
                 :key="educate.label"></el-option>
               </el-select>
             </el-form-item>
             <el-form-item label="就读时间" prop="linkTime">
             <el-date-picker
-              v-model="modifiededucation.linkTime"
+              v-model="modifiedEducation.linkTime"
               placeholder="就读时间"
-              format="yyyy 年 M 月"
+              format="yyyy 年 MM 月"
               type="daterange"
-              value-format="timestamp"
+              value-format="yyyy-MM"
               />
           </el-form-item>
             <el-form-item label="专业名称" prop="major">
-              <el-input v-model="modifiededucation.major"
+              <el-input v-model="modifiedEducation.major"
               type="text"
               placeholder="专业名称"/>
             </el-form-item>
           </el-form>
           <div class="control">
-            <div @click="" class="submit">保存并更新</div>
+            <el-button :loading="loading" @click="submit" class="submit">保存并更新</el-button>
             <div @click="cancelModify" class="cancel">取消</div>
           </div>
         </div>
@@ -81,7 +82,14 @@ export default {
   data() {
     return {
       modifiedEducation: {},
-      hide: false
+      hide: false,
+      loading: false,
+      educationRule: {
+        school: [{ required: true, message: '请填写毕业院校', trigger: ['blur', 'change'] }],
+        education: [{ required: true, message: '请选择学历', trigger: ['blur', 'change'] }],
+        major: [{ required: true, message: '请填写专业', trigger: ['blur', 'change'] }],
+        linkTime: [{ required: true, message: '请选择就读时间', trigger: ['blur', 'change'] }],
+      },
     }
   },
   computed: {
@@ -92,19 +100,54 @@ export default {
   methods: {
     cancelModify() {
       this.$store.dispatch('ChangeEducationActive', '')
-      this.modifiededucation = JSON.parse(JSON.stringify(this.education))
+      this.initData()
+      this.loading = false
     },
     showHidden() {
       this.$store.dispatch('ChangeEducationActive', this.index)
+    },
+    submit() {
+      this.$refs.education.validate(valid => {
+        if (valid) {
+          this.loading = true
+          this.$store.dispatch('UpdateEducation', {
+            school: this.modifiedEducation.school,
+            education: this.modifiedEducation.education,
+            startTime: this.modifiedEducation.linkTime[0],
+            endTime: this.modifiedEducation.linkTime[1],
+            major: this.modifiedEducation.major,
+            id: this.education.id
+          }).then(res => {
+            this.$store.dispatch('GetMyResume').then(() => {
+              this.cancelModify()
+            })
+          },err => {
+            this.loading = false
+          })
+        } else {
+          return  false
+        }
+      })
+    },
+    initData() {
+      this.modifiedEducation = {
+        school: this.education.school,
+        education: this.education.education,
+        linkTime: [ this.education.startTime, this.education.endTime ],
+        major: this.education.major
+      }
     }
   },
   beforeMount() {
-    this.modifiededucation = JSON.parse(JSON.stringify(this.education))
+    this.initData()
   },
   filters: {
     timeFilter(time) {
-      let parseTime = new Date(+time)
-      return parseTime.getFullYear() + '-' + (parseTime.getMonth() + 1)
+      let parseTime = new Date(time).getTime()
+      parseTime = new Date(parseTime)
+      let y = parseTime.getFullYear()
+      let m = parseTime.getMonth() + 1
+      return y + "." + m
     }
   }
 }

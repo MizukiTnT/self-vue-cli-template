@@ -8,9 +8,17 @@
           </a>
         </el-col>
         <el-col :span="12" class="link-wrapper">
-          <router-link to="" class="nav-to">首页</router-link>
-          <router-link to="" class="nav-to">职位</router-link>
-          <router-link to="" class="nav-to">职业合作</router-link>
+          <template v-if="identity != 2
+          ">
+            <router-link to="/" :class="{active: $route.path === '/index'}" target="_blank"  class="nav-to">首页</router-link>
+            <router-link to="/search" :class="{active: $route.path === '/search'}" target="_blank"  class="nav-to">职位</router-link>
+          </template>
+          <template v-if="identity === 2">
+            <router-link to="/companyCenter" :class="{active: $route.path === '/companyCenter'}" target="_blank"  class="nav-to">首页</router-link>
+            <router-link to="/manage/jobManage/onlineJob" target="_blank" :class="{active: $route.path === '/manage/jobManage/onlineJob'}" class="nav-to">职位管理</router-link>
+            <router-link to="/manage/resumeManage/waitToDeal" :class="{active: $route.path === '/manage/resumeManage/waitToDeal'}" target="_blank" class="nav-to">简历管理</router-link>
+            <router-link to="/searchResume" :class="{active: $route.path === '/searchResume'}" target="_blank" class="nav-to">搜索简历</router-link>
+          </template>
         </el-col>
         <el-col :span="6" class="align-right">
           <router-link to="" class="back-to-index">
@@ -29,15 +37,22 @@ export default {
   computed: {
     ...mapGetters([
       'avatar',
-      'name'
+      'name',
+      'identity'
     ])
   },
   methods: {
     logout() {
       this.$store.dispatch('LogOut').then(() => {
-        location.reload() // 为了重新实例化vue-router对象 避免bug
+        this.$router.push({
+          path: '/index',
+          replace: true
+        }) // 为了重新实例化vue-router对象 避免bug
       })
     }
+  },
+  mounted() {
+    console.log(this.$route.path)
   }
 }
 </script>

@@ -17,7 +17,7 @@
     <div class="list">
       <slot></slot>
       <div class="item">
-        <router-link to="">
+        <router-link to="/preview/myResume">
           <img src="">
           <p>我的简历</p>
         </router-link>

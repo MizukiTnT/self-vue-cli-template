@@ -4,74 +4,79 @@
       <div class="select-wrapper">
         <el-select v-model="proValue" placeholder="不限省份" @change="getCityData">
           <el-option
-            v-for="item in proOptions"
+            v-for="item in province"
             :key="item.value"
-            :label="item.label"
+            :label="item.name"
             :value="item.value"/>
         </el-select>
-        <img class="i-dropdown" src="@/assets/images/dropdown.png">
       </div>
-      <div class="select-wrapper">
-        <el-select v-model="cityValue" placeholder="不限城市">
-          <el-option
-            v-for="item in cityOptions"
-            :key="item.value"
-            :label="item.label"
-            :value="item.value"/>
-        </el-select>
-        <img class="i-dropdown" src="@/assets/images/dropdown.png">
-      </div>
-      <el-input type="text" class="search-item"/>
-      <el-button class="do-search">搜索</el-button>
+      <transition name="el-fade-in">
+        <div class="select-wrapper" v-if="cityOptions.length > 0">
+          <el-select v-model="cityValue"
+          @change="combineLocation" placeholder="不限城市">
+            <el-option
+              v-for="item in cityOptions"
+              :key="item.value"
+              :label="item.name"
+              :value="item.value"/>
+          </el-select>
+        </div>
+      </transition>
+      <el-input v-model="keywords" type="text" class="search-item"/>
+      <el-button @click="doSearch" class="do-search">搜索</el-button>
     </div>
   </div>
 </template>
 
 <script>
+import { getProvinces, getCities } from '@/api/base'
+import { uuid } from '@/utils'
+import { mapGetters } from 'vuex'
 export default {
   data() {
     return {
-      input: '',
-      cityOptions: [
-        {
-          value: 111000,
-          label: '萍乡市'
-        },
-        {
-          value: 111001,
-          label: '上饶'
-        },
-        {
-          value: 111003,
-          label: '南昌市'
-        },
-        {
-          value: 111004,
-          label: '景德镇市'
-        }
-      ],
+      keywords: '',
+      cityOptions: [],
       cityValue: '',
-      proOptions: [
-        {
-          value: 10000,
-          label: '江西'
-        },
-        {
-          value: 10001,
-          label: '四川'
-        },
-        {
-          value: 10002,
-          label: '重庆'
-        }
-      ],
-      proValue: ''
+      proValue: '',
+      items: {}
     }
   },
+  computed: {
+    ...mapGetters([
+      'province'
+    ])
+  },
   methods: {
-    getProvinceData() {},
     getCityData(val) {
-      console.log(val)
+      this.$store.dispatch('GetCities', val).then((res) => {
+        // 判断是否有下一级市 有则赋值 没有则直接合并提交项
+        if(res.info.length > 0) {
+          this.cityOptions = res.info
+        } else {
+          Object.assign(this.items, { provinceId: this.proValue })
+        }
+      })
+    },
+    // 合并省市信息
+    combineLocation() {
+      Object.assign(this.items, { provinceId: this.proValue, cityId: this.cityValue })
+    },
+    // 合并并提交所有信息
+    doSearch() {
+      Object.assign(this.items, { name: this.keywords.trim() }, this.$store.state.search.searchItem, { key: uuid().substr(0, 8) })
+      this.$router.push({
+        path: '/search',
+        query: this.items
+      })
+    }
+  },
+  beforeMount() {
+    this.items = Object.assign(this.items, this.searchItem)
+    if(this.province.length > 0) {
+      return
+    } else {
+      this.$store.dispatch('GetProvinces')
     }
   }
 }
@@ -96,12 +101,8 @@ export default {
         display: inline-block;
         cursor: pointer;
         .el-select {
-          width: 112px;
           .el-input__inner {
             border: none;
-          }
-          .el-input__suffix {
-            display: none;
           }
         }
         .i-dropdown {

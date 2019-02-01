@@ -8,23 +8,23 @@ export const expOptions = {
       expOptions: [
         {
           label: '应届毕业生',
-          value: '1'
+          value: 1
         },
         {
           label: '1-2年',
-          value: '2'
+          value: 2
         },
         {
           label: '3-4年',
-          value: '3'
+          value: 3
         },
         {
           label: '5-9年',
-          value: '4'
+          value: 4
         },
                 {
           label: '10年以上',
-          value: '5'
+          value: 5
         }
       ]
     }
@@ -38,23 +38,23 @@ export const educationOptions = {
       educationOptions: [
         {
           label: '高中/高中以下',
-          value: '1'
+          value: 1
         },
         {
           label: '大专',
-          value: '2'
+          value: 2
         },
         {
           label: '本科',
-          value: '3'
+          value: 3
         },
         {
           label: '硕士',
-          value: '4'
+          value: 4
         },
                 {
           label: '博士',
-          value: '5'
+          value: 5
         }
       ]
     }
@@ -68,23 +68,23 @@ export const expectWork = {
       expectWork: [
         {
           label: '研发生产',
-          value: '1'
+          value: 1
         },
         {
           label: '市场服务',
-          value: '2'
+          value: 2
         },
         {
           label: '销售管理',
-          value: '3'
+          value: 3
         },
         {
           label: '人事行政',
-          value: '4'
+          value: 4
         },
         {
           label: '其他',
-          value: '5'
+          value: 5
         }
       ]
     }
@@ -97,35 +97,35 @@ export const salaryOptions = {
     return {
       salaryOptions: [
         {
-          value: '1',
+          value: 1,
           label: '面议'
         },
         {
-          value: '2',
+          value: 2,
           label: '2k以下'
         },
         {
-          value: '3',
+          value: 3,
           label: '2k-5k'
         },
         {
-          value: '4',
+          value: 4,
           label: '5k-10k'
         },
         {
-          value: '5',
+          value: 5,
           label: '10k-15k'
         },
         {
-          value: '6',
+          value: 6,
           label: '15k-25k'
         },
         {
-          value: '7',
+          value: 7,
           label: '25k-50k'
         },
         {
-          value: '8',
+          value: 8,
           label: '50k以上'
         }
       ]
@@ -140,15 +140,15 @@ export const radioOptions = {
       radioOptions: [
         {
           label: '全职',
-          value: '1'
+          value: 1
         },
         {
           label: '兼职',
-          value: '2'
+          value: 2
         },
         {
           label: '实习',
-          value: '3'
+          value: 3
         }
       ]
     }
@@ -162,19 +162,19 @@ export const industryOptions = {
       industryOptions: [
         {
           label: '互联网/电子商务',
-          value: '1'
+          value: 1
         },
         {
           label: '计算机软件',
-          value: '2'
+          value: 2
         },
         {
           label: '农业相关',
-          value: '3'
+          value: 3
         },
         {
           label: '销售',
-          value: '4'
+          value: 4
         }
       ]
     }
@@ -193,15 +193,15 @@ export const companySizeOptions = {
       companySizeOptions: [
         {
           label: '0-49人',
-          value: '1'
+          value: 1
         },
         {
           label: '50-99人',
-          value: '2'
+          value: 2
         },
         {
           label: '100人以上',
-          value: '3'
+          value: 3
         }
       ]
     }
@@ -215,19 +215,19 @@ export const companyTypeOptions = {
       companyTypeOptions: [
         {
           label: '创业型公司',
-          value: '1'
+          value: 1
         },
         {
           label: '发展型公司',
-          value: '2'
+          value: 2
         },
         {
           label: '成熟型公司',
-          value: '3'
+          value: 3
         },
         {
           label: '上市公司',
-          value: '4'
+          value: 4
         }
       ]
     }

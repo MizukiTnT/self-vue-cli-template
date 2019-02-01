@@ -2,25 +2,25 @@
   <div class="preview">
     <div class="wrapper">
       <div class="header">
-        <div class="name">{{ resumeData.baseInfo.name }}</div>
+        <div class="name">{{ info.name }}</div>
         <ul class="details">
-          <li class="detail">{{ resumeData.baseInfo.age }}</li>
-          <li class="detail">{{ resumeData.baseInfo.sex }}</li>
-          <li class="detail">{{ resumeData.baseInfo.education }}</li>
-          <li class="detail">{{ resumeData.baseInfo.exp }}</li>
-          <li class="detail">{{ resumeData.baseInfo.location }}</li>
+          <li class="detail">{{ info.birthDate | timeParser }}</li>
+          <li class="detail">{{ info.sex | sexFilter }}</li>
+          <li class="detail">{{ info.education | educateFilter }}</li>
+          <li class="detail">{{ info.workYear | expFilter }}</li>
+          <li class="detail">{{ info.city }}</li>
         </ul>
         <div class="info">
           <div class="zt">
             <i class="el-icon-mobile-phone"/>
-            <span>{{ resumeData.baseInfo.mobile }}</span>
+            <span>{{ info.mobile }}</span>
           </div>
           <div class="zt">
             <i class="el-icon-message"/>
-            <span>{{ resumeData.baseInfo.mail }}</span>
+            <span>{{ info.mail }}</span>
           </div>
           <div class="zt">
-            <span>{{ resumeData.baseInfo.condition }}</span>
+            <span>{{ info.workStatus | conditionFilter }}</span>
           </div>
         </div>
       </div>
@@ -28,49 +28,49 @@
         <div class="will">
           <div class="col">
             <div class="topic">工作地址:</div>
-            <div class="content">{{ resumeData.expectWork.location }}</div>
+            <div class="content">{{ info.expectCity }}</div>
           </div>
           <div class="col">
             <div class="topic">工作性质:</div>
-            <div class="content">{{ resumeData.expectWork.type }}</div>
+            <div class="content">{{ info.expectPositionType | typeFilter }}</div>
           </div>
           <div class="col">
             <div class="topic">期望职业:</div>
-            <div class="content">{{ resumeData.expectWork.job }}</div>
+            <div class="content">{{ info.expectPositionName }}</div>
           </div>
           <div class="col">
             <div class="topic">期望月薪:</div>
-            <div class="content">{{ resumeData.expectWork.salary }}</div>
+            <div class="content">{{ info.expectMonthSalary | salaryFilter }}</div>
           </div>
         </div>
       </block>
       <block title="工作经验">
         <div class="exp">
-          <div v-for="(exp, index) in resumeData.workExp" :key="index" class="exp-wrapper">
+          <div v-for="(exp, index) in info.expers" :key="index" class="exp-wrapper">
             <div class="dot"/>
-            <div class="time">{{ exp.time }}</div>
+            <div class="time">{{ exp.startTime | timeParser }} - {{ exp.endTime | timeParser }} </div>
             <div class="content">
-              <div class="company-name">{{ exp.name }}</div>
-              <div class="work-desc">{{ exp.description }}</div>
+              <div class="company-name">{{ exp.positionName }}</div>
+              <div class="work-desc" v-html="exp.describes" ></div>
             </div>
           </div>
         </div>
       </block>
       <block title="教育经历">
         <div class="edu-exp">
-          <div class="edu-wrapper" v-for="(edu, index) in resumeData.educationExp" :key="index">
+          <div class="edu-wrapper" v-for="(edu, index) in info.educations" :key="index">
             <el-row>
-              <el-col :span="8">{{ edu.name }}</el-col>
-              <el-col :span="3">{{ edu.background }}</el-col>
+              <el-col :span="8">{{ edu.school }}</el-col>
+              <el-col :span="3">{{ edu.education | educateFilter }}</el-col>
               <el-col :span="5">{{ edu.major }}</el-col>
-              <el-col :span="8">{{ edu.time }}</el-col>
+              <el-col :span="8">{{ edu.startTime | timeParser}} - {{ edu.endTime | timeParser }} </el-col>
             </el-row>
           </div>
         </div>
       </block>
       <block title="自我评价">
         <div class="self-wrapper">
-          <div class="self">{{ resumeData.selfEvaluate }}</div>
+          <div v-html="info.selfEvaluation" class="self"></div>
         </div>
       </block>
       <a href="" class="button">下载简历</a>
@@ -80,70 +80,48 @@
 
 <script>
 import Block from './Block'
+import { sexFilter, educateFilter, expFilter, conditionFilter, salaryFilter, typeFilter} from '@/mixin/filters'
+import { mapState } from 'vuex'
 export default {
+  mixins: [
+    sexFilter,
+    educateFilter,
+    expFilter,
+    conditionFilter,
+    salaryFilter,
+    typeFilter
+  ],
   components: {
     Block
   },
   props: ['id'],
   data() {
     return {
-      resumeData: {
-        baseInfo: {
-          name: '聂xx',
-          age: '20岁',
-          sex: '男',
-          education: '本科',
-          exp: '4年工作经验',
-          location: '南昌',
-          mobile: '123232323',
-          mail: 'fdfasfsad@.com',
-          condition: '我已经离职, 可快速到岗'
-        },
-        expectWork: {
-          location: '江西省 南昌市',
-          type: '全职',
-          salary: '10-12k',
-          job: '淘宝'
-        },
-        workExp: [
-          {
-            time: '2018-2010',
-            name: '江西省xxx',
-            description: 'fafl;kasdflksd'
-          },
-          {
-            time: '2018-2010',
-            name: '江西省xxx',
-            description: 'fafl;kasdflksd'
-          },
-          {
-            time: '2018-2010',
-            name: '江西省xxx',
-            description: 'fafl;kasdflksd'
-          }
-        ],
-        educationExp: [
-          {
-            name: '南昌大学',
-            major: '信息工程',
-            background: '本科',
-            time: '2018/2/31-2018/6/32'
-          },
-          {
-            name: '南昌大学',
-            major: '信息工程',
-            background: '本科',
-            time: '2018/2/31-2018/6/32'
-          },
-          {
-            name: '南昌大学',
-            major: '信息工程',
-            background: '本科',
-            time: '2018/2/31-2018/6/32'
-          }
-        ],
-        selfEvaluate: 'fasfkasjkfljdlfjsaflkfskadfasdkfasf'
-      }
+      info: null
+    }
+  },
+  watch: {
+    '$route'() {
+      console.log(this.id)
+    }
+  },
+  filters: {
+    timeParser(time) {
+      let parseTime = new Date(time).getTime()
+      parseTime = new Date(parseTime)
+      let y = parseTime.getFullYear()
+      let m = parseTime.getMonth() + 1
+      let d = parseTime.getDay()
+      return y + "." + m + '.' + d
+    }
+  },
+  beforeMount() {
+    if(this.id === 'myResume') {
+      this.$store.dispatch('GetMyResume').then(() => {
+        this.info = this.$store.state.resume.userInfo
+      })
+    } else {
+
     }
   }
 }

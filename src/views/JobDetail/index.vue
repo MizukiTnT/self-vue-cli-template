@@ -6,16 +6,16 @@
         <div class="header">
           <el-row :gutter="20" align="top" type="flex">
             <el-col :span="10">
-              <div class="time">{{ jobInfo.outputTime }}</div>
+              <div class="time">{{ jobInfo.modifyTime }}</div>
               <div class="job-name">{{ jobInfo.name }}</div>
             </el-col>
             <el-col :span="8">
-              <div class="salary">{{ jobInfo.salary }}</div>
+              <div class="salary">{{ jobInfo.monthSalary }}</div>
               <div class="details">
-                <span>{{ jobInfo.location }}</span>
-                <span>{{ jobInfo.exp }}</span>
-                <span>{{ jobInfo.scholar }}</span>
-                <span>{{ jobInfo.type }}</span>
+                <span>{{ jobInfo.city }}</span>
+                <span>{{ jobInfo.workYear }}</span>
+                <span>{{ jobInfo.education }}</span>
+                <span>{{ jobInfo.companyType }}</span>
               </div>
             </el-col>
             <el-col :span="6">
@@ -53,13 +53,13 @@
                 <img src="" alt="">
               </div>
               <div class="company">
-                <div class="title">{{ jobInfo.companyInfo.name }}</div>
-                <div class="name">{{ jobInfo.companyInfo.name }}</div>
-                <div class="type">{{ jobInfo.companyInfo.type }}</div>
-                <div class="site">{{ jobInfo.companyInfo.site }}</div>
+                <div class="title">{{ jobInfocompanyName }}</div>
+                <div class="name">{{ jobInfo.companyName }}</div>
+                <div class="type">{{ jobInfo.scale }}</div>
+                <div class="site">{{ jobInfo.homeUrl }}</div>
               </div>
               <div class="title b">工作地址</div>
-              <div class="loc"><i class="el-icon-location"></i>{{ jobInfo.companyInfo.location }}</div>
+              <div class="loc"><i class="el-icon-location"></i>{{ jobInfo.address }}</div>
               <div class="more-company">
                 <el-tabs>
                   <el-tab-pane label="相似职位">

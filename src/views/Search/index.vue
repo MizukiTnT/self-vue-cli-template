@@ -4,14 +4,16 @@
     <div class="result-wrapper">
       <el-row :gutter="20">
         <el-col :span="5">
-          <option-bar @transOptions="getOptions"/>
+          <option-bar/>
         </el-col>
         <el-col :span="19">
-          <job-box :jobs="jobs"/>
+          <div v-loading="isLoading">
+            <job-box :jobs="jobs"/>
+          </div>
           <div class="pagination">
             <el-pagination
               @current-change="handleCurrentChange"
-              :current-page.sync="currentPage"
+              :current-page.sync="pageIndex"
               :page-size="100"
               layout="prev, pager, next, jumper"
               :total="1000">
@@ -77,7 +79,9 @@ export default {
           time: '最新'
         }
       ],
-      currentPage: 1
+
+      pageIndex: 1,
+      isLoading: false
     }
   },
   components: {
@@ -89,13 +93,28 @@ export default {
     '$route': 'getSearch'
   },
   methods: {
-    getOptions(options) {
-
-    },
     handleCurrentChange() {
 
+    },
+    getSearch() {
+      let items = {}
+      this.isLoading = true
+      // 筛选出key 不作为参数上传 key用于重复检索时刷新页面
+      Object.keys(this.$route.query).map(key => {
+        if (key != 'key') {
+          items[key] = this.$route.query[key]
+        }
+      })
+      Object.assign(items, { pageIndex: this.pageIndex })
+      this.$store.dispatch('Search', items).then((res) => {
+        this.isLoading = false
+        this.jobs = res.info.list
+      })
     }
-  }
+  },
+  mounted() {
+    this.getSearch()
+  },
 }
 </script>
 

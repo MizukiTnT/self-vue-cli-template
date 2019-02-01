@@ -68,7 +68,10 @@ export default {
       font-size: 14px;
       line-height: 26px;
       .introduction {
-        max-height: 10px;
+        max-height: 50px;
+        overflow-y: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
       }
     }
     .title {

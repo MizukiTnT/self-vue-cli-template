@@ -8,10 +8,10 @@
       <div class="user-options">
         <span v-if="name">
           <span>欢迎回来</span>
-          <!-- 用户下拉菜单 -->
-          <el-dropdown>
+          <!-- 个人用户 -->
+          <el-dropdown v-if="identity == 1">
             <span class="el-dropdown-link">
-              <span>{{ name }}}</span>
+              <span>{{ name }}</span>
               <i class="el-icon-arrow-down el-icon--right"/>
             </span>
             <el-dropdown-menu slot="dropdown">
@@ -22,22 +22,44 @@
                 <router-link to="/deliver">投递箱</router-link>
               </el-dropdown-item>
               <el-dropdown-item>
-                <router-link to="/collectResume">收藏夹</router-link>
+                <router-link to="/collectJob">收藏夹</router-link>
+              </el-dropdown-item>
+              <el-dropdown-item>
+                <div @click="logout">退出</div>
+              </el-dropdown-item>
+            </el-dropdown-menu>
+          </el-dropdown>
+          <!-- 企业用户 -->
+          <el-dropdown v-if="identity == 2">
+            <span class="el-dropdown-link">
+              <span>{{ name }}</span>
+              <i class="el-icon-arrow-down el-icon--right"/>
+            </span>
+            <el-dropdown-menu slot="dropdown">
+              <el-dropdown-item>
+                <router-link to="/manage/jobManage/newJob">发布职位</router-link>
+              </el-dropdown-item>
+              <el-dropdown-item>
+                <router-link to="/manage/accountManage/setInfo">账号设置</router-link>
               </el-dropdown-item>
               <el-dropdown-item @click="logout">退出</el-dropdown-item>
             </el-dropdown-menu>
           </el-dropdown>
-          <!-- 用户下拉菜单 -->
+          <!-- 未登录 -->
+        </span>
 
+        <span v-else class="navis">
+          <span>
+            <router-link to="/login">登录</router-link>
+          </span>
+          <span>
+            <router-link to="/register">注册</router-link>
+          </span>
         </span>
 
         <span>
-
-        </span>
-
-        <span>
+          <svg-icon icon-class="tel" class="icon" />
           <span>400-886-97979</span>
-          <i/>
         </span>
       </div>
     </nav>
@@ -49,9 +71,22 @@ import { mapGetters } from 'vuex'
 export default {
    computed: {
      ...mapGetters([
-       'name'
+       'name',
+       'identity'
      ])
-   }
+   },
+  methods: {
+    async logout() {
+      await this.$store.dispatch('LogOut')
+      location.reload()
+    },
+    companyLogout() {
+
+    }
+  },
+  mounted() {
+
+  }
 }
 </script>
 
@@ -62,6 +97,11 @@ export default {
   font-size: 14px;
   color: #f7f7f7;
   background-color: #333;
+  a {
+    &:hover {
+      color: #fff;
+    }
+  }
   .navbar-black-nav {
 
     .to-company {
@@ -69,6 +109,14 @@ export default {
     }
     .user-options {
       float: right;
+      .navis {
+        span {
+          padding: 0 20px;
+          &:first-child {
+            border-right: 1px solid #fff;
+          }
+        }
+      }
       .el-dropdown {
         margin: 0 40px 0 10px;
         color: #f7f7f7;

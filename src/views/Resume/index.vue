@@ -5,33 +5,110 @@
         <el-col :span="18">
           <div class="body">
             <div class="block" id="char">
-              <charactor :charact="resumeData.charact"/>
+              <charactor/>
             </div>
             <div class="block" id="will">
-              <willing :will="resumeData.will" />
+              <willing />
             </div>
             <div class="block" id="exp">
               <div class="resume-title">工作经验</div>
-              <div @click="addExp" class="add-button">
+              <div @click="experShow = true" class="add-button">
                 <i class="el-icon-plus"/>
                 <span>添加工作经验</span>
               </div>
-              <exp v-for="(exper, index) in newExper"
+              <exp v-if="info.expers.length > 0 && info.expers" v-for="(exper, index) in info.expers"
               :index="index"
               :experData="exper" :key="exper.id" />
+              <div v-show="experShow" class="hide-view">
+                <el-form
+                :model="modifiedExp"
+                ref="exper"
+                :rules="expRules"
+                label-width="95px"
+                label-position="left"
+                >
+                  <el-form-item label="公司名称" prop="companyName">
+                    <el-input v-model="modifiedExp.companyName"
+                    placeholder="公司名称"/>
+                  </el-form-item>
+                  <el-form-item label="职位名称" prop="positionName">
+                      <el-input type="text" placeholder="职位名称" v-model="modifiedExp.positionName"></el-input>
+                  </el-form-item>
+                  <el-form-item label="在职时间" prop="linkTime">
+                  <el-date-picker
+                    v-model="modifiedExp.linkTime"
+                    placeholder="选择范围"
+                    format="yyyy 年 M 月"
+                    type="daterange"
+                    value-format="yyyy-MM"
+                    />
+                </el-form-item>
+                  <el-form-item label="工作描述" prop="describes">
+                    <el-input v-model="modifiedExp.describes"
+                    type="textarea"
+                    :maxlength="500"
+                    :minlength="10"
+                    :autosize="{ minRows: 5}"
+                    placeholder="工作描述"/>
+                  </el-form-item>
+                </el-form>
+                <div class="control">
+                  <el-button :loading="expLoading" @click="submitExper" class="submit">保存并更新</el-button>
+                  <div @click="cancelModify" class="cancel">取消</div>
+                </div>
+              </div>
             </div>
             <div class="block" id="edu-exp">
               <div class="resume-title">教育经历</div>
-              <div @click="addEducate" class="add-button">
+              <div @click="educationShow = true" class="add-button">
                 <i class="el-icon-plus"/>
                 <span>添加教育经验</span>
               </div>
-              <education-exp v-for="(education, index) in newEducation" :education="education" :index="index"
+              <education-exp v-if="info.educations.length > 0 && info.educations" v-for="(education, index) in info.educations" :education="education" :index="index"
               :key="index"/>
+              <div v-show="educationShow" class="hide-view">
+                <el-form
+                  :model="modifiededucation"
+                  ref="education"
+                  :rules="educationRule"
+                  label-width="95px"
+                  label-position="left"
+                >
+                  <el-form-item label="学校名称" prop="school">
+                    <el-input v-model="modifiededucation.school"
+                    placeholder="学校名称"/>
+                  </el-form-item>
+                  <el-form-item label="学历" prop="education">
+                    <el-select v-model="modifiededucation.education" placeholder="选择学历">
+                      <el-option v-for="educate in educationOptions" :label="educate.label" :value="educate.value"
+                      :key="educate.label"></el-option>
+                    </el-select>
+                  </el-form-item>
+                  <el-form-item label="就读时间" prop="time">
+                  <el-date-picker
+                    v-model="modifiededucation.time"
+                    placeholder="就读时间"
+                    format="yyyy 年 M 月"
+                    type="daterange"
+                    value-format="yyyy-MM"
+                    />
+                </el-form-item>
+                  <el-form-item label="专业名称" prop="major">
+                    <el-input v-model="modifiededucation.major"
+                    type="text"
+                    placeholder="专业名称"/>
+                  </el-form-item>
+                </el-form>
+                <div class="control">
+                  <el-button :loading="educateLoading" @click="submitEducation" class="submit">保存并更新</el-button>
+                  <div @click="cancelEducationModify" class="cancel">取消</div>
+                </div>
+              </div>
+
             </div>
             <div class="self-evaluation" id="self">
               <div class="resume-title">自我评价</div>
-              <evaluation :self="resumeData.self"/>
+              <evaluation :self="info.selfEvaluation"/>
             </div>
           </div>
         </el-col>
@@ -56,7 +133,10 @@
 <script>
 import { Willing, Exp, Evaluation, EducationExp, Charactor, FloatBoard } from './components'
 import AsideBlock from '@/components/AsideBlock'
+import { educationOptions } from '@/mixin/options'
+import { mapState } from 'vuex'
 export default {
+  mixins: [ educationOptions ],
   components: {
     Willing,
     Exp,
@@ -66,6 +146,9 @@ export default {
     AsideBlock,
     FloatBoard
   },
+  computed: mapState({
+    info: (state) => state.resume.userInfo
+  }),
   data() {
     return {
       resumeData: {
@@ -81,11 +164,9 @@ export default {
           province: '江西',
           city: '萍乡',
           provinceId: '',
-          workStatus: {
-
-          },
-          workYear: '1',
-          status: '1',
+          workStatus: 1,
+          workYear: 1,
+          status: 1,
           selfEvaluation: 'fsafdsafsa',
           mobile: '17673058233',
           mail: '522178072@qq.com'
@@ -152,39 +233,99 @@ export default {
 
       },
       showTemp: false,
-      newExper: [
-        {}
-      ],
-      newEducation: [
-        {}
-      ]
+      experShow: false, // 是否显示工作经验form
+      modifiedExp: { // 新的工作经验
+        companyName: '',
+        positionName: '',
+        linkTime: '',
+        describes: ''
+      },
+      expRules: {
+        companyName: [{ required: true, message: '请填写公司名称', trigger: ['blur', 'change'] }],
+        positionName: [{ required: true, message: '请填写职位名称', trigger: ['blur', 'change'] }],
+        linkTime: [{ required: true, message: '请选择在职时间', trigger: ['blur', 'change'] }],
+        describes: [{ required: true, message: '请填写工作描述', trigger: ['blur', 'change'] }],
+      }, // 工作经验form rules
+      expLoading: false,
+      educationShow: false,
+      modifiededucation: {
+        school: '', // 学校
+        education: '', // 学历
+        major: '', // 专业
+        time: []
+      },
+      educationRule: {
+        school: [{ required: true, message: '请填写毕业院校', trigger: ['blur', 'change'] }],
+        education: [{ required: true, message: '请选择学历', trigger: ['blur', 'change'] }],
+        major: [{ required: true, message: '请填写专业', trigger: ['blur', 'change'] }],
+        time: [{ required: true, message: '请选择就读时间', trigger: ['blur', 'change'] }],
+      },
+      educateLoading: false
     }
   },
   methods: {
-    addExp() {
-      this.$store.dispatch('ChangeActive', 0)
-    },
     addEducate() {
       this.$store.dispatch('ChangeEducationActive', 0)
+    },
+    // 新添工作经验
+    submitExper() {
+      this.$refs.exper.validate(valid => {
+        if (valid) {
+          this.expLoading = true
+          this.$store.dispatch('UpdateExp', {
+            companyName: this.modifiedExp.companyName,
+            positionName: this.modifiedExp.positionName,
+            startTime: this.modifiedExp.linkTime[0],
+            endTime: this.modifiedExp.linkTime[1],
+            describes: this.modifiedExp.describes.replace(/\r\n/g, '<br/>').replace(/\n/g, '<br/>').replace(/\s/g, ' '),
+          }).then(res => {
+            this.$store.dispatch('GetMyResume').then(() => {
+              this.cancelModify()
+            })
+          },err => {
+            this.expLoading = false
+          })
+        } else {
+          return  false
+        }
+      })
+    },
+    // 取消工作经验修改
+    cancelModify() {
+      this.experShow = false
+      this.$refs.exper.resetFields()
+    },
+    cancelEducationModify() {
+      this.educationShow = false
+      this.$refs.education.resetFields()
+    },
+    submitEducation() {
+      this.$refs.education.validate(valid => {
+        if (valid) {
+          this.educateLoading = true
+          this.$store.dispatch('UpdateEducation', {
+            school: this.modifiededucation.school,
+            education: this.modifiededucation.education,
+            startTime: this.modifiededucation.time[0],
+            endTime: this.modifiededucation.time[1],
+            major: this.modifiededucation.major
+          }).then(res => {
+            this.$store.dispatch('GetMyResume').then(() => {
+              this.cancelEducationModify()
+            })
+          },err => {
+            this.educateLoading = false
+          })
+        } else {
+          return  false
+        }
+      })
     }
   },
-  beforeMount() {
-    this.resumeData.exper.forEach(v => {
-      this.newExper.push(v)
-    })
-    this.newExper.map((v, i) => {
-      if (i != 0) {
-        v.linkTime = [v.startTime, v.endTime]
-      }
-    })
-    this.resumeData.education.forEach(v=> {
-      this.newEducation.push(v)
-    })
-    this.newEducation.map((v, i) => {
-      if (i != 0) {
-        v.linkTime = [v.startTime, v.endTime]
-      }
-    })
+  async beforeMount() {
+    await this.$store.dispatch('GetMyResume')
+    await this.$store.dispatch('GetProvinces')
+    console.log(this.info)
   }
 }
 </script>

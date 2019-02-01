@@ -1,26 +1,14 @@
 <template>
   <div class="spread-board">
-    <el-row :gutter="20">
+    <el-row :gutter="0">
       <el-col :span="6">
-        <div class="board-controller">
-          <ul>
-            <li v-for="item in listData" :key="item.value" @mouseenter="showLayer(item.value)" @mouseleave="closeLayer">
+        <div class="board-controller"  @mouseleave="closeLayer">
+          <ul class="arrow-container">
+            <li v-for="item in listData" :key="item.value" @mouseenter="showLayer(item.value)" class="arrow-li">
               <span>{{ item.text }}</span>
               <i class="el-icon-arrow-right"/>
             </li>
-
           </ul>
-        </div>
-      </el-col>
-      <el-col :span="18">
-        <div class="board-stage">
-          <div class="board-swiper">
-            <el-carousel :interval="5000" height="370px" indicator-position="outside" arrow="never">
-              <el-carousel-item v-for="item in 4" :key="item">
-                <h3>{{ item }}</h3>
-              </el-carousel-item>
-            </el-carousel>
-          </div>
           <transition name="el-fade-in">
             <div class="board-layer" v-show="show">
               <ul class="type-wrapper">
@@ -35,6 +23,18 @@
               </ul>
             </div>
           </transition>
+        </div>
+      </el-col>
+      <el-col :span="18">
+        <div class="board-stage">
+          <div class="board-swiper">
+            <el-carousel :interval="5000" height="370px" indicator-position="outside" arrow="never">
+              <el-carousel-item v-for="item in 4" :key="item">
+                <h3>{{ item }}</h3>
+              </el-carousel-item>
+            </el-carousel>
+          </div>
+
         </div>
       </el-col>
     </el-row>
@@ -179,8 +179,10 @@ export default {
   .spread-board {
     padding: 23px 0;
     .board-controller {
-      ul {
-        li {
+      position: relative;
+      .arrow-container {
+        padding: 0 10px;
+        .arrow-li {
           position: relative;
           padding: 15px 0;
           color: #4B4742;
@@ -191,22 +193,15 @@ export default {
           }
         }
       }
-    }
-    .board-stage {
-      position: relative;
-      height: 410px;
-      .board-swiper {
-        height: 100%;
-      }
       .board-layer {
         position: absolute;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
+        top: -16px;
+        left: 186px;
+        width: 559px;
+        height: 370px;
         padding: 15px;
         border: 2px solid #556675;
-        z-index: 10;
+        z-index: 100;
         background-color: #fff;
         .type-wrapper {
           .type {
@@ -220,6 +215,7 @@ export default {
               .items {
                 display: inline-block;
                 margin: 8px 5px;
+                cursor: default;
                 a {
                   font-size: 13px;
                 }
@@ -231,6 +227,14 @@ export default {
           }
         }
       }
+    }
+    .board-stage {
+      position: relative;
+      height: 410px;
+      .board-swiper {
+        height: 100%;
+      }
+
     }
   }
   .el-carousel__item h3 {

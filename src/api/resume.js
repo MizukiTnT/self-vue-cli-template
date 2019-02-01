@@ -1,48 +1,80 @@
 import request from '@/utils/request'
 
-const resumeApi = {
   // 更新个人基本信息
-  updateBaseInfo(baseInfo) {
+export function updateBaseInfo(baseInfo) {
     return request({
       url: '/personnel/resume/addOrUpdate',
       method: 'POST',
       data: baseInfo
     })
-  },
+  }
   // 更行教育信息
-  updateEducation(education) {
+export function  updateEducation(education) {
     return request({
       url: '/personnel/resume/addOrUpdateEducation',
       method: 'POST',
       data: education
     })
-  },
+  }
 
-  // 更新期望共奏
-  updateExpectWork(expectWork) {
+  // 更新期望工作
+export function updateExpectWork(expectWork) {
     return request({
       url: '/personnel/resume/addOrUpdateExpect',
       method: 'POST',
-      data: { expectWork }
+      data: expectWork
     })
-  },
-
+  }
   // 更新工作经验
-  updateExp(exp) {
+export function updateExp(exp) {
     return request({
       url: '/personnel/resume/addOrUpdateExper',
       method: 'POST',
       data: exp
     })
-  },
+  }
 
-  getResumeData(token) {
+  // 获取自己简历详情
+export function getResumeData(token) {
     return request({
       url: '/personnel/resume/myResume',
-      method: 'POST',
-      data: { token }
+      method: 'POST'
     })
   }
+
+// 根据id拉取简历详情
+export function getResumeById(id) {
+  return request({
+    url: '/personnel/resume/queryDetail',
+    method: 'POST',
+    data: { id }
+  })
 }
 
-export default baseApi
+// 设定简历是否可见
+export function changeResumeState(status) {
+  return request({
+    url: '/personnel/resume/updateStatus',
+    method: 'POST',
+    data: { status }
+  })
+}
+
+// 搜索简历
+export function searchResume (querys) {
+  return request({
+    url: '/personnel/resume/search',
+    method: 'POST',
+    data: querys
+  })
+ }
+
+ // 自我评价
+export function selfEvaluate(infos) {
+  return request({
+    url: '/personnel/resume/addOrUpdateSelf',
+    method: 'POST',
+    data: infos
+  })
+ }
+

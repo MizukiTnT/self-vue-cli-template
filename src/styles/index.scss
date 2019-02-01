@@ -98,6 +98,14 @@ ul,li {
   background-color: #F9F9F9;
   .control {
     text-align: center;
+    .submit {
+      margin-right: 60px;
+      padding: 7px 17px;
+      background-color: #30BE7A;
+      color: #fff;
+      font-size: 16px;
+      border-radius: 17px;
+    }
     >div {
       display: inline-block;
       cursor: pointer;

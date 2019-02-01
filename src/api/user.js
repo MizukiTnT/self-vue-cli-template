@@ -1,10 +1,10 @@
 import request from '@/utils/request'
 
-export function login(name, password, code) {
+export function login(name, password, code, uId) {
   return request({
     url: '/user/login',
     method: 'POST',
-    data: { name, password, code }
+    data: { name, password, code, uId }
   })
 }
 
@@ -32,12 +32,12 @@ export function logout(token) {
   })
 }
 
-export function getCode(mobile, type) {
+export function getCode(mobile, type, uId) {
   console.log(mobile, type)
   return request({
     url: '/sms/sendCode',
     method: 'POST',
-    data: { mobile, type }
+    data: { mobile, type, uId }
   })
  }
 
@@ -55,3 +55,22 @@ export function updateUserInfo(token, headImage, nickname) {
     data: { token, headImage, nickname }
   })
  }
+
+export function getImgCode(type, uId) {
+  return request({
+    url: '/signCode/get',
+    method: 'GET',
+    params: { type, uId },
+    responseType: 'arraybuffer'
+  })
+}
+
+ // 企业端
+ export function companyLogout(token) {
+  return request({
+    url: '/personnel/company/exitLogin',
+    method: 'POST',
+    data: { token }
+  })
+ }
+

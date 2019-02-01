@@ -1,9 +1,9 @@
 <template>
   <div class="box-wrapper">
-    <router-link to="" v-for="(item, index) in boxList" :key="index" class="box">
-      <span to="" class="job">{{ item.job }}</span>
-      <span>{{ item.company }}</span>
-      <span>{{ item.location }}</span>
+    <router-link :to="'/jobDetail/' + item.id " v-for="(item, index) in boxList" :key="index" class="box">
+      <span class="job">{{ item.name }}</span>
+      <span>{{ item.companyName }}</span>
+      <span>{{ item.city }}</span>
     </router-link>
   </div>
 </template>
@@ -12,30 +12,13 @@
 export default {
   props: {
     boxList: {
-      required: true,
-      type: Array,
-      default: [
-        {
-          links: '',
-          job: '产品经理',
-          company: '江西来融金服',
-          location: '萍乡'
-        },
-        {
-          links: '',
-          job: '产品经理',
-          company: '江西来融金服',
-          location: '萍乡'
-        },
-        {
-          links: '',
-          job: '产品经理',
-          company: '江西来融金服',
-          location: '萍乡'
-        }
-      ]
-    }
-  }
+      required: true
+    },
+
+  },
+  mounted() {
+    console.log(this.boxList)
+  },
 }
 </script>
 

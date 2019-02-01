@@ -1,6 +1,6 @@
 <template>
   <div class="home">
-    <search-bar/>
+    <search-bar url="job" :searchItem="{}"/>
 
     <div class="container">
       <board/>
@@ -18,10 +18,10 @@
       <div class="tab-wrapper">
         <el-tabs>
           <el-tab-pane label="热门职位">
-            <box :boxList="boxList"></box>
+            <box :boxList="info.hot"></box>
           </el-tab-pane>
           <el-tab-pane label="推荐职位">
-            <box :boxList="boxList"></box>
+            <box :boxList="info.recommends"></box>
           </el-tab-pane>
         </el-tabs>
       </div>
@@ -29,11 +29,8 @@
       <!-- 应届生招聘 -->
       <div class="tab-wrapper">
         <el-tabs>
-          <el-tab-pane label="热门职位">
-            <box :boxList="boxList"></box>
-          </el-tab-pane>
-          <el-tab-pane label="推荐职位">
-            <box :boxList="boxList"></box>
+          <el-tab-pane label="应届生招聘专区">
+            <box :boxList="info.currents"></box>
           </el-tab-pane>
         </el-tabs>
       </div>
@@ -41,7 +38,10 @@
       <div class="tab-warpper hr">
         <el-tabs>
           <el-tab-pane label="最新人才">
-            <hr-page :tableList="tableList"></hr-page>
+            <hr-page :tableList="info.news"></hr-page>
+          </el-tab-pane>
+          <el-tab-pane label="应届生">
+            <hr-page :tableList="info.graduations"></hr-page>
           </el-tab-pane>
         </el-tabs>
       </div>
@@ -60,108 +60,12 @@
 
 <script>
 import { SearchBar, Board, Box, HrPage, Dropdown } from './components'
-
+import { getHomeData, test } from '@/api/home'
+import bus from '@/utils/bus'
 export default {
   data() {
     return {
-      boxList: [
-        {
-          links: '',
-          job: '产品经理',
-          company: '江西来融金服',
-          location: '萍乡'
-        },
-        {
-          links: '',
-          job: '产品经理',
-          company: '江西来融金服',
-          location: '萍乡'
-        },
-        {
-          links: '',
-          job: '产品经理',
-          company: '江西来融金服',
-          location: '萍乡'
-        },
-        {
-          links: '',
-          job: '产品经理',
-          company: '江西来融金服',
-          location: '萍乡'
-        },
-        {
-          links: '',
-          job: '产品经理',
-          company: '江西来融金服',
-          location: '萍乡'
-        },
-        {
-          links: '',
-          job: '产品经理',
-          company: '江西来融金服',
-          location: '萍乡'
-        },
-        {
-          links: '',
-          job: '产品经理',
-          company: '江西来融金服',
-          location: '萍乡'
-        },
-        {
-          links: '',
-          job: '产品经理',
-          company: '江西来融金服',
-          location: '萍乡'
-        },
-        {
-          links: '',
-          job: '产品经理',
-          company: '江西来融金服',
-          location: '萍乡'
-        }
-      ],
-      tableList: [
-        {
-          name: '聂航斌',
-          gender: '男',
-          age: '30',
-          exp: '10年以上',
-          scholar: '本科',
-          will: '市场'
-        },
-        {
-          name: '聂航斌',
-          gender: '男',
-          age: '30',
-          exp: '10年以上',
-          scholar: '本科',
-          will: '市场'
-        },
-        {
-          name: '聂航斌',
-          gender: '男',
-          age: '30',
-          exp: '10年以上',
-          scholar: '本科',
-          will: '市场'
-        },
-        {
-          name: '聂航斌',
-          gender: '男',
-          age: '30',
-          exp: '10年以上',
-          scholar: '本科',
-          will: '市场'
-        },
-        {
-          name: '聂航斌',
-          gender: '男',
-          age: '30',
-          exp: '10年以上',
-          scholar: '本科',
-          will: '市场'
-        }
-      ]
+      info: {}
     }
   },
   components: {
@@ -171,8 +75,9 @@ export default {
     HrPage,
     Dropdown
   },
-  mounted() {
-
+  async beforeMount() {
+    let res = await getHomeData()
+    this.info = res.info
   }
 }
 </script>
