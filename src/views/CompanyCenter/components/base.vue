@@ -117,7 +117,7 @@ export default {
     },
     // 提前处理读取的图片
     beforeAvatarUpload(file) {
-      const isJPG = file.type ==='image/jpeg/png';
+      const isJPG = file.type === 'image/jpeg' ? true : file.type === 'image/png' ? true : file.type === 'image/gif' ? true : false
       const isLt2M = file.size /1024 / 1024 < 5;
 
       if (!isJPG) {

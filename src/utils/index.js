@@ -85,7 +85,7 @@ export function formatTime(time, option) {
     )
   }
 }
-
+// 这个deepClone并没有处理数组中的对象 建议使用场景是
 export function deepClone(x) {
 
   const uniqueList = [];
@@ -151,4 +151,14 @@ function find(arr, item) {
   }
 
   return null;
+}
+
+// 将/r/n转换成<br/>
+export function transSpace(str) {
+  return str.replace(/\r\n/g, '<br/>').replace(/\n/g, '<br/>').replace(/\s/g, ' ')
+}
+
+// 将<br/> 转换成/r/n
+export function transBr(str) {
+  return str.replace(/<br\/>/g, "\n")
 }

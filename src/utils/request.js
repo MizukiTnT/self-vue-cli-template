@@ -58,23 +58,19 @@ service.interceptors.response.use(
     }
     if (res.code === 404) {
       router.replace('/404')
+      return
     }
     /**
      * code为11 登录超时
      */
     if (res.code === -11) { // 超时则把store和cookie中的id和token删除 并跳转登录页面(后期可增加一个错误处理页面 作为跳的中转)
-      console.log('测试有没有用')
       router.replace('/login')
-      Notification({
-        title: '提示',
-        message: res.msg,
-        type: 'warning'
-      })
       removeToken()
       removeIdentity()
       store.user.commit('SET_TOKEN', '')
       store.user.commit('SET_IDENTITY', '')
       location.reload()
+      return
     }
     /**
      * code为-1 各种意义上的错误 包括密码错误等
@@ -86,6 +82,94 @@ service.interceptors.response.use(
         type: 'warning'
       })
       return Promise.reject(res.msg)
+    }
+
+    /**
+     * code -30 跳转开通招聘服务第一步
+     * code-31 跳到开通招聘服务第二步
+     * code -32 跳到验证邮箱页面
+     * code -33 填写公司基本信息
+     * code -34 填写公司标签
+     * code -35 填写公司介绍
+     * code -36 公司信息待审核
+     * code -37 审核失败
+     */
+    if (res.code === -30) {
+      router.push({
+        path: '/account/open',
+        query: {
+          page: 0
+        }
+      })
+      return
+    }
+    if (res.code === -31) {
+      router.push({
+        path: '/account/open',
+        query: {
+          page: 1
+        }
+      })
+      return
+    }
+
+    if (res.code === -32) {
+      router.push({
+        path: '/account/open',
+        query: {
+          page: 2
+        }
+      })
+      return
+    }
+
+    if (res.code === -33) {
+      router.push({
+        path: '/recruitService',
+        query: {
+          page: 0
+        }
+      })
+      return
+    }
+
+    if (res.code === -34) {
+      router.push({
+        path: '/recruitService',
+        query: {
+          page: 1
+        }
+      })
+      return
+    }
+    if (res.code === -35) {
+      router.push({
+        path: '/recruitService',
+        query: {
+          page: 2
+        }
+      })
+      return
+    }
+
+    if (res.code === -36) {
+      router.push({
+        path: '/recruitService',
+        query: {
+          page: 3
+        }
+      })
+      return
+    }
+
+    if (res.code === -37) {
+      router.push({
+        path: '/recruitService',
+        query: {
+          page: 1
+        }
+      })
+      return
     }
 
     /**

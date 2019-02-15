@@ -6,6 +6,8 @@ import  resume from './modules/resume'
 import recruit from './modules/recruit'
 import base from './modules/base'
 import search from './modules/search'
+import company from './modules/company'
+
 
 Vue.use(Vuex)
 
@@ -15,7 +17,8 @@ const store = new Vuex.Store({
     resume,
     recruit,
     base,
-    search
+    search,
+    company
   },
   getters
 })

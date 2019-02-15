@@ -290,7 +290,7 @@ export default {
     },
     // 对上传头像进行验证
     beforeAvatarUpload(file) {
-      const isJPG = file.type === 'image/jpeg' || 'image/png' || 'image/gif'
+      const isJPG = file.type === 'image/jpeg' ? true : file.type === 'image/png' ? true : file.type === 'image/gif' ? true : false
       const isLt2M = file.size / 1024 / 1024 < 2
       if (!isJPG) {
         this.$message.error('上传头像图片格式错误')

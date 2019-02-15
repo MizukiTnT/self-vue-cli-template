@@ -65,6 +65,39 @@ export const asyncRouteMap = {
       meta: {
         title: '屏蔽职位'
       }
+    },
+    {
+      path: '/account',
+      redirect: '/account/open',
+      component: Layout,
+      meta: {
+        title: '账户'
+      },
+      children: [
+        {
+          path: 'open',
+          name: 'openAccount',
+          component: () => import('@/views/Account/open'),
+
+          meta: {
+            title: '开通招聘服务'
+          }
+        }
+      ]
+    },
+    {
+      path: '/recruitService',
+      component: Layout,
+      children: [
+        {
+          path: '',
+          name: 'recruitService',
+          component: () => import('@/views/Recruit'),
+          meta: {
+            title: '开通企业版'
+          }
+        }
+      ]
     }
   ],
   company: [
@@ -186,38 +219,6 @@ export const asyncRouteMap = {
       ]
     },
     {
-      path: '/account',
-      redirect: '/account/open',
-      component: Layout,
-      meta: {
-        title: '账户'
-      },
-      children: [
-        {
-          path: 'open',
-          name: 'openAccount',
-          component: () => import('@/views/Account/open'),
-          meta: {
-            title: '开通账户'
-          }
-        }
-      ]
-    },
-    {
-      path: '/recruitService',
-      component: Layout,
-      children: [
-        {
-          path: '',
-          name: 'recruitService',
-          component: () => import('@/views/Recruit'),
-          meta: {
-            title: '开通招聘服务'
-          }
-        }
-      ]
-    },
-    {
       path: '/companyIndex',
       component: Layout,
       children: [
@@ -244,7 +245,7 @@ export const asyncRouteMap = {
           }
         }
       ]
-    },
+    }
   ],
   errPage: [
     { path: '*', redirect: '/404' }
@@ -375,7 +376,7 @@ export const constantRouterMap = [
 
 
 export default new Router({
-  // mode: 'history', //后端支持可开
+  mode: 'history', //后端支持可开
   scrollBehavior: () => ({ y: 0 }),
   routes: [
     ...constantRouterMap,

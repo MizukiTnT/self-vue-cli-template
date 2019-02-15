@@ -2,7 +2,7 @@ import router from './router'
 import store from './store'
 import NProgress from 'nprogress' // Progress 进度条
 import 'nprogress/nprogress.css'// Progress 进度条样式
-import { getToken } from '@/utils/auth' // 拿到token
+import { getToken, getIdentity } from '@/utils/auth' // 拿到token
 NProgress.configure({ showSpinner: false })
 import { Message } from 'element-ui'
 import { asyncRouteMap } from './router' // 拿到动态添加表
@@ -10,6 +10,9 @@ import { asyncRouteMap } from './router' // 拿到动态添加表
   let whiteList = [ '/index', '/company', '/search', '/jobDetail', '/login', '/register', '/preview', '/404' ]
   router.beforeEach( (to, from, next) => {
     NProgress.start()
+    if(store.state.user.identity && (store.state.user.identity !== +getIdentity())) { // 这一部是为了防止用户在邮箱点击后改变了storage内的identity后回到原页面出现的身份冲突问题
+      location.reload()
+    }
     if(getToken()) { // 有token
       if (to.path === '/login' || to.path === '/register') { // 如果有tokent跳login和register 则跳转首页
         next({path: '/'})

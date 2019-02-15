@@ -3,7 +3,7 @@
     <nav class="navbar-black-nav">
       <div class="to-company">
         <i/>
-        <router-link to="">进入企业版</router-link>
+        <span @click="toCompany" class="toCompany">进入企业版</span>
       </div>
       <div class="user-options">
         <span v-if="name">
@@ -82,6 +82,9 @@ export default {
     },
     companyLogout() {
 
+    },
+    toCompany() {
+      this.$store.dispatch('GoCompany')
     }
   },
   mounted() {
@@ -106,6 +109,10 @@ export default {
 
     .to-company {
       display: inline-block;
+      .toCompany {
+        color: #fff;
+        cursor: pointer;
+      }
     }
     .user-options {
       float: right;

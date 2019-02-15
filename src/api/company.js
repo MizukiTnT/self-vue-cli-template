@@ -49,28 +49,10 @@ export function companyDetail(info) {
   })
 }
 
-// 企业具体信息
-export function companyDetail(info) {
-  return request({
-    url: '/personnel/company/queryDetail',
-    method: 'post',
-    data: info
-  })
-}
-
-// 企业注册第一步
-export function companyRegister(info) {
-  return request({
-    url: '/personnel/company/register',
-    method: 'post',
-    data: info
-  })
-}
-
 // 企业注册第一步
 export function companyRegisterOne(info) {
   return request({
-    url: '/personnel/company/register',
+    url: '/personnel/companyApply/add',
     method: 'post',
     data: info
   })
@@ -79,18 +61,18 @@ export function companyRegisterOne(info) {
 // 企业注册第二步
 export function companyRegisterTwo(info) {
   return request({
-    url: '/personnel/company/updateLabels',
+    url: '/personnel/companyApply/updateTwo',
     method: 'post',
     data: info
   })
 }
 
-// 企业注册第三步
-export function companyRegisterThree(info) {
+// 修改邮箱
+export function upadateMail(mail) {
   return request({
-    url: '/personnel/company/updateIntroduce',
+    url: '/personnel/companyApply/updateMail',
     method: 'post',
-    data: info
+    data: { mail }
   })
 }
 
@@ -111,3 +93,39 @@ export function changeMail(info) {
     data: info
   })
 }
+
+// 获取企业状态码
+export function getConditionCode() {
+  return request({
+    url: '/personnel/companyApply/getResultCode',
+    method: 'post'
+  })
+}
+
+// 企业注册第一步
+export function registerCompanyOne(info) {
+  return request({
+    url: '/personnel/company/register',
+    method: 'post',
+    data: info
+  })
+}
+
+// 企业注册第二步
+export function registerCompanyTwo(labels) {
+  return request({
+    url: '/personnel/company/updateLabels',
+    method: 'post',
+    data: { labels }
+  })
+}
+
+// 企业注册第三步
+export function registerCompanyThree(info) {
+  return request({
+    url: '/personnel/company/updateIntroduce',
+    method: 'post',
+    data: info
+  })
+}
+

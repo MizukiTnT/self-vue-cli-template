@@ -11,7 +11,7 @@ module.exports = {
     assetsPublicPath: '/',
     proxyTable: {
       '/api': {
-        // target: 'http://n25t4q.natappfree.cc/platform',
+        // target: 'http://nhseur.natappfree.cc/platform',
         target: 'http://121.42.190.141:85/platform',
         changeOrigin: true,
         pathRewrite: {
@@ -66,7 +66,7 @@ module.exports = {
      * then assetsPublicPath should be set to "/bar/".
      * In most cases please use '/' !!!
      */
-    assetsPublicPath: '/',
+    assetsPublicPath: './',
 
     /**
      * Source Maps

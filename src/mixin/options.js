@@ -224,10 +224,6 @@ export const companyTypeOptions = {
         {
           label: '成熟型公司',
           value: 3
-        },
-        {
-          label: '上市公司',
-          value: 4
         }
       ]
     }

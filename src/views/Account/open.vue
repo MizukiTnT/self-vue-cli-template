@@ -7,7 +7,7 @@
     <step :currentStep="currentStep" />
     <div class="content">
       <div v-show="currentStep == 0" class="step">
-        <el-form :model="connect">
+        <el-form :model="connect" :rules="ruleOne" ref="one">
           <el-form-item prop="mobile"
           label="联系电话" required>
             <el-input v-model="connect.mobile"
@@ -23,13 +23,14 @@
         </el-form>
         <div class="button">
           <el-button
+           :loading="loading"
            @click="stepOne"
            class="next-step">下一步</el-button>
         </div>
         <div class="hint warm">如有其它问题，请编辑问题发送至 yaoqin@191.cn ，我们会尽快为您解决。</div>
       </div>
       <div v-show="currentStep == 1" class="step">
-        <el-form :model="company">
+        <el-form :model="company" :rules="ruleTwo" ref="two">
           <el-form-item
            prop="name"
            label="公司全称"
@@ -43,36 +44,36 @@
           <el-row>
             <el-col :span="16">
               <el-form-item
-               prop="lisence"
+               prop="images"
                label="营业执照"
                required
                >
                 <el-upload
-                  class="upload-demo"
                   drag
-                  action="https://jsonplaceholder.typicode.com/posts/"
-                  :on-success="handleLisenceSuccess"
-                  :before-upload="beforeLisenceUpload"
-                  multiple>
+                  class="avatar-uploader"
+                  :action="baseApi + '/file/uploadImage'"
+                  :show-file-list="false"
+                  :on-success="handleAvatarSuccess"
+                  :before-upload="beforeLisenceUpload">
                   <i class="el-icon-upload"></i>
                   <div class="el-upload__text">将文件拖到此处，或<em>点击上传</em></div>
-                  <div class="el-upload__tip" slot="tip">支持jpg、jpeg、png、gif、pdf格式，文件不超过5M</div>
+                  <div class="el-upload__tip" slot="tip">支持jpg、jpeg、png、gif格式，文件不超过5M</div>
                 </el-upload>
 
               </el-form-item>
             </el-col>
             <el-col :offset="2" :span="6">
               <el-form-item
-               label="营业执照"
-               required
+               label="图片预览"
               >
-                <img :src="previewImg" alt="">
+                <img @click="showImage" class="preview" :src="calImage" >
               </el-form-item>
             </el-col>
           </el-row>
         </el-form>
         <div class="button">
           <el-button
+           :loading="loading"
            @click="stepTwo"
            class="next-step">下一步</el-button>
            <span
@@ -82,7 +83,7 @@
         </div>
       </div>
       <div v-show="currentStep == 2" class="step">
-        <h3>验证邮件已发送至：</h3>
+        <h3>验证邮件已发送至：{{ connect.mail }}</h3>
         <p class="makesure">请点击邮件内的链接完成确认，确认后即可发布职位登录邮箱点击邮件内的链接，验证后即可发布职位</p>
         <h3>没有收到确认邮件，怎么办？
           <span class="try-again" @click="tryAgain">重新发送</span>
@@ -94,65 +95,159 @@
         </el-input>
       </div>
     </div>
+    <el-dialog
+      title="预览"
+      center
+      width="60%"
+      lock-scroll
+      :visible.sync="dialogVisible"
+      >
+      <div style="width:100%;text-align: center">
+        <img :src="calImage" style="max-width: 100%">
+      </div>
+    </el-dialog>
+    <el-dialog
+      title="提示"
+      :visible.sync="makesure"
+      width="50%"
+      >
+      <span>您是否确定内容填写正确, 提交后若发现内容错误可在编辑完公司信息后去公司信息页编辑</span>
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="makesure = false">取 消</el-button>
+        <el-button type="primary" @click="sendMail">确 定</el-button>
+      </span>
+    </el-dialog>
+
+
   </div>
 </template>
 
 <script>
 import step from './components/step'
+let baseApi = process.env.BASE_API
 export default {
   components: {
     step
   },
   data() {
     return {
-      currentStep: 0,
-      previewImg: undefined,
-      newMail: undefined,
-      connect: {
+      currentStep: 0, // 当前步数
+      previewImg: undefined, // 预览图片
+      newMail: undefined, // 新的企业邮箱
+      baseApi: baseApi, // 请求url
+      makesure: false, // 确定发送验证信息flag
+      connect: { // 第一步form
         mobile: '',
         mail: ''
       },
-      company: {
+      company: { // 第二步form
         name: '',
-        imgUrl: ''
+        images: ''
       },
-
+      ruleOne: { // 第一步rule
+        mobile: [
+          { required: true, message: '请输入手机号', trigger: [ 'blur', 'change' ] }
+        ],
+        mail: [
+          { required: true, message: '请输入邮箱', trigger: [ 'blur', 'change' ] }
+        ]
+      },
+      ruleTwo: { // 第二步rule
+        name: [
+          { required: true, message: '请输入公司名称', trigger: [ 'blur', 'change' ] }
+        ],
+        images: [
+          { required: true, message: '请提交营业执照', trigger: [ 'blur', 'change' ] }
+        ]
+      },
+      loading: false,
+      dialogVisible: false
+    }
+  },
+  computed: {
+    calImage() {
+      return this.previewImg ? this.baseApi + '/file/showImage?fileName=' + this.previewImg : ''
     }
   },
   methods: {
-    // 处理图片传输后回调
-    handleLisenceSuccess(res, file) {
-
-    },
     // 限制图片内容
     beforeLisenceUpload(file) {
-      const isJPG = file.type === 'image/jpeg/png/gif/pdf';
-      const isLt2M = file.size / 1024 / 1024 < 5;
-
+      const isJPG = file.type === 'image/jpeg' ? true : file.type === 'image/png' ? true : file.type === 'image/gif' ? true : false
+      const isLt5M = file.size / 1024 / 1024 < 5
       if (!isJPG) {
-        this.$message.error('上传图片格式不正确!');
+        this.$message.error('上传头像图片格式错误')
       }
-      if (!isLt2M) {
-        this.$message.error('上传图片大小不能超过 5MB!');
+      if (!isLt5M) {
+        this.$message.error('上传图片大小不能超过5MB!')
       }
-      return isJPG && isLt2M;
+      return isJPG && isLt5M
     },
-    // 重新发送
-    tryAgain() {
-
+    showImage() {
+      this.dialogVisible = true
     },
     // 第一步点击下一步处理
     stepOne() {
-      this.currentStep++
+      this.$refs.one.validate((valid) => {
+        if(valid) {
+          this.loading = true
+          this.$store.dispatch('CompanyRegisterOne', this.connect).then(() => {
+            this.loading = false
+            this.current = 1
+          },() => {
+            this.loading = false
+          })
+        } else {
+          return false
+        }
+      })
     },
     // 第二步完结
     stepTwo() {
-      this.currentStep++
+      this.$refs.two.validate((valid) => {
+        if(valid) {
+          this.makesure = true
+        } else {
+          return false
+        }
+      })
+    },
+    sendMail() {// 第二步结束 提交数据并向邮箱发送信息
+      this.makesure = false
+      this.loading = true
+      this.$store.dispatch('CompanyRegisterTwo', this.company).then((res) => {
+        this.loading = false
+        this.currentStep = 2
+      }, (err) => {
+        this.loading = false
+      })
+    },
+    tryAgain() { // 重新向邮箱发送信息
+
     },
     // 回到第一步
-    backToStepOne() {},
+    backToStepOne() {
+      this.$refs.two.resetFields()
+      this.currentStep = 0
+    },
     // 改变邮箱
-    changeMail() {}
+    async changeMail() {
+      await this.$store.dispatch('UpadateMail', this.newMail)
+      this.$notify({
+        title: '成功',
+        message: '更改邮箱成功',
+        type: 'success'
+      })
+    },
+    // 处理图片上传完毕回调
+    handleAvatarSuccess(res, file) {
+      this.previewImg = res.info
+      this.company.images = res.info
+    }
+  },
+  beforeMount() { // 其他页面进入该页面会带字段名为page的query 如果没带 则可以判断是通过url进入的 则在页面请求状态码接口由回request处理跳转
+    this.$store.dispatch('GetConditionCode').then(() => {
+      this.currentStep = this.$route.query.page
+    })
   }
 }
 </script>
@@ -178,6 +273,10 @@ export default {
     }
     .content {
       .step {
+        .preview {
+          width: 100%;
+          cursor: pointer;
+        }
         .button {
           .next-step {
             padding: 10px 56px;
@@ -193,6 +292,11 @@ export default {
             font-size: 16px;
             margin-left: 44px;
             cursor: pointer;
+          }
+        }
+        .avatar-uploader {
+          .el-upload__tip {
+            line-height: 12px;
           }
         }
         .hint {

@@ -28,9 +28,10 @@ export default {
       display: inline-block;
       margin: 0 15px 10px 0;
       padding: 0 20px;
-      font-size: 16px;
+      font-size: 14px;
       background-color: #10B76C;
       color: #fff;
+      line-height: 30px;
       border-radius: 4px;
       position: relative;
       cursor: pointer;

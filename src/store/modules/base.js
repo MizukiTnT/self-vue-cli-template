@@ -26,7 +26,7 @@ const base = {
     GetCities({}, provinceId) {
       return new Promise((resolve, reject) => {
         getCities(provinceId).then((res) => {
-          resolve(res)
+          resolve(res.info)
         }).catch((err) => {
           console.log(err)
           reject(err)
